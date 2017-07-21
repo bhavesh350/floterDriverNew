@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- First part is a gradient -->
+    <item
+        android:left="0dp"
+        android:right="0dp">
+        <shape android:shape="rectangle">
+
+            <solid android:color="@color/white"></solid>
+            <stroke
+                android:width="@dimen/dim_1"
+                android:color="@color/blue_text"></stroke>
+            <corners android:radius="@dimen/dim_8"></corners>
+        </shape>
+    </item>
+    <!-- Second part is plain color. Slightly transparent -->
+    <!--<item-->
+    <!--android:bottom="20sp"-->
+    <!--android:top="1sp">-->
+    <!--<shape android:shape="rectangle">-->
+    <!--<solid android:color="#100E577D" />-->
+    <!--</shape>-->
+
+    <!--</item>-->
+</layer-list>

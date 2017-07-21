@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">414245249155-27v65tt17lo30ddobvbojtjprpcnhto4.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://floter-user.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">414245249155</string>
+    <string name="google_api_key" translatable="false">AIzaSyAWGcYXq7jQJ6fOkqcLzP_604WLmwpO3Uk</string>
+    <string name="google_app_id" translatable="false">1:414245249155:android:f4e7ece773af6af6</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAWGcYXq7jQJ6fOkqcLzP_604WLmwpO3Uk</string>
+    <string name="google_storage_bucket" translatable="false">floter-user.appspot.com</string>
+</resources>

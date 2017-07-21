@@ -1,0 +1,26 @@
+[
+    {
+        "outputFile": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-ldrtl-v17\\values-ldrtl-v17.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 45,
+                    "endOffset": 96
+                },
+                "from": {
+                    "file": "C:\\Users\\Aquad\\.android\\build-cache\\ed6d34da71a7bfb64a837a5ce91f54f2c2dd6576\\output\\res\\values-ldrtl-v17\\values-ldrtl-v17.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 55,
+                        "endColumn": 45,
+                        "endOffset": 96
+                    }
+                }
+            }
+        ]
+    }
+]

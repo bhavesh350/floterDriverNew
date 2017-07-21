@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <TextView
+            android:id="@+id/feedhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Trip Detail"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dim_20"
+            android:typeface="serif"></TextView>
+    </android.support.v7.widget.Toolbar>
+    <RelativeLayout
+        android:id="@+id/input_fields"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#EDEDED"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/one"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F9F9F9">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/txt_date_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_8"
+                        android:layout_marginTop="@dimen/dim_10"
+                        android:text="29/04/17"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_15"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:id="@+id/txt_cost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:layout_marginTop="@dimen/dim_10"
+                        android:text=" Rs. 49"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dim_7">
+
+                    <TextView
+                        android:id="@+id/txt_truck_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="Tata Ace"
+                        android:textColor="#777A81"
+                        android:textSize="@dimen/dim_15" />
+
+                    <TextView
+                        android:id="@+id/payment_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="CASH"
+                        android:textColor="#777A81"
+                        android:textSize="@dimen/dim_15" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/address_src"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dim_10"
+                    android:layout_marginTop="@dimen/dim_20"
+                    android:drawableLeft="@drawable/add_marker"
+                    android:drawablePadding="@dimen/dim_10"
+                    android:paddingRight="@dimen/dim_5"
+                    android:text="Street Number 17, Block Number 271, Chandra Park - 2, Gulab "
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dim_5"
+                    android:layout_marginLeft="@dimen/dim_10"
+                    android:text="To"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_14" />
+
+                <TextView
+                    android:id="@+id/address_dest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dim_10"
+                    android:drawableLeft="@drawable/add_marker"
+                    android:drawablePadding="@dimen/dim_10"
+                    android:paddingRight="@dimen/dim_5"
+                    android:text="Street Number 17, Block Number 271, Chandra Park - 2, Gulab "
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_15" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dim_1"
+                    android:layout_marginTop="@dimen/dim_10"
+                    android:background="#F4F4F4" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="@dimen/dim_10"
+                    android:paddingTop="@dimen/dim_10">
+
+                    <!--<com.pkmmte.view.CircularImageView-->
+                    <!--android:id="@+id/driver_image"-->
+                    <!--android:layout_width="@dimen/dim_50"-->
+                    <!--android:layout_height="@dimen/dim_50"-->
+                    <!--android:layout_marginLeft="@dimen/dim_10"-->
+                    <!--android:src="@drawable/ic_drv"-->
+                    <!--app:border="true"-->
+                    <!--app:border_color="@color/colorPrimary"-->
+                    <!--app:border_width="1dp" />-->
+
+                    <TextView
+                        android:id="@+id/driver_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/dim_10"
+                        android:text="Your ride with "
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_20" />
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:layout_toRightOf="@+id/driver_label"
+                        android:text="Ashok"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_20"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/label_reciept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/one"
+            android:layout_marginTop="@dimen/dim_5"
+            android:background="@color/white"
+            android:gravity="center"
+            android:padding="@dimen/dim_10"
+            android:text="RECEIPT"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dim_18"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/label_reciept"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim_10"
+                android:layout_marginLeft="@dimen/dim_8"
+                android:layout_marginTop="@dimen/dim_10"
+                android:text="Floter Receipt"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dim_20"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dim_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dim_5"
+                    android:text="Trip Fare"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+
+                <TextView
+                        android:id="@+id/trip_fare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dim_8"
+                    android:text="Rs. 91.97"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+            </RelativeLayout>
+
+
+            <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="@dimen/dim_5">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="@dimen/dim_5"-->
+            <!--android:text="Platform Fee"-->
+            <!--android:textColor="@color/black"-->
+            <!--android:textSize="@dimen/dim_15" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/txt_platform"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_marginRight="@dimen/dim_8"-->
+            <!--android:text="Rs.91.97"-->
+            <!--android:textColor="@color/black"-->
+            <!--android:textSize="@dimen/dim_15" />-->
+            <!--</RelativeLayout>-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dim_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dim_5"
+                    android:text="Discounts"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+
+                <TextView
+                    android:id="@+id/discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dim_8"
+                    android:text="0"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dim_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dim_5"
+                    android:text="Subtotal"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+
+                <TextView
+                    android:id="@+id/subtotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dim_8"
+                    android:text="Rs.91.97"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/dim_10"
+                android:background="@color/colorPrimaryDark"></View>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim_5"
+                android:layout_marginTop="@dimen/dim_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dim_5"
+                    android:text="Total"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+
+                <TextView
+                    android:id="@+id/total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dim_8"
+                    android:text="Rs. 49"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dim_18" />
+            </RelativeLayout>
+
+        </LinearLayout>
+        <!--</android.support.v7.widget.CardView>-->
+    </RelativeLayout>
+
+</LinearLayout>

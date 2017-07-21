@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Floter Driver</string>
+    <string name="timeout">Timeout occurred, Check your internet connection</string>
+    <string name="something_wrong">Error occurred with code</string>
+
+    <string name="drawer_open">openDrawer</string>
+    <string name="drawer_close">closeDrawer</string>
+
+    <string name="facebook_app_id">689966794516400</string>
+    <string name="loading">Please wait...</string>
+    <string name="alert">Alert!</string>
+    <string name="connect_working_internet">Please connect to working internet connection</string>
+    <string name="fb_login_protocol_scheme">fb689966794516400</string>
+
+
+
+    <string name="latitude_label">Latitude:</string>
+    <string name="longitude_label">Longitude:</string>
+
+    <string name="latitude_label_D">Destination Latitude:</string>
+    <string name="longitude_label_D">Destination Longitude:</string>
+
+    <string name="last_update_time_label">Last updated time:</string>
+
+    <string name="location_updated_message">Location Updated.</string>
+
+
+
+
+
+
+    <string name="no_geocoder_available">No geocoder available</string>
+
+    <string name="fetch_address">Fetch address</string>
+
+    <string name="address_found">Address found</string>
+
+    <string name="no_address_found">Sorry, no address found</string>
+
+    <string name="no_location_data_provided">No location data provided</string>
+
+    <string name="service_not_available">Sorry, the service is not available</string>
+
+    <string name="invalid_lat_long_used">Invalid latitude or longitude used</string>
+    <string name="call_permissions_not_granted">Cannot make a call without permission is granted</string>
+</resources>

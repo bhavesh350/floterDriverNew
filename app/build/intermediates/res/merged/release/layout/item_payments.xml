@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dim_10"
+    android:background="@color/white"
+    app:cardCornerRadius="@dimen/dim_4">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txt_pay_id"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dim_5"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:padding="3.0dip"
+            android:text="ID : 12345"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dim_18"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_pay_id"
+            android:paddingLeft="@dimen/dim_10"
+            android:text="Finished"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dim_16" />
+
+        <TextView
+            android:id="@+id/txt_payment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_status"
+            android:paddingBottom="@dimen/dim_7"
+            android:paddingLeft="@dimen/dim_10"
+            android:text="Rs. 10000"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dim_16" />
+
+        <TextView
+            android:id="@+id/txt_time_stamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txt_payment"
+            android:layout_alignParentRight="true"
+            android:paddingBottom="@dimen/dim_7"
+            android:paddingRight="@dimen/dim_10"
+            android:text="02:25" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

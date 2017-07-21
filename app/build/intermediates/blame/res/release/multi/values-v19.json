@@ -1,0 +1,49 @@
+[
+    {
+        "outputFile": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-v19\\values-v19.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endLine": 10,
+                    "endColumn": 12,
+                    "endOffset": 525
+                },
+                "from": {
+                    "file": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\values-v19\\styles.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 57,
+                        "endLine": 11,
+                        "endColumn": 12,
+                        "endOffset": 535
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 530,
+                    "endLine": 16,
+                    "endColumn": 12,
+                    "endOffset": 837
+                },
+                "from": {
+                    "file": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\values-v19\\styles.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 543,
+                        "endLine": 18,
+                        "endColumn": 12,
+                        "endOffset": 855
+                    }
+                }
+            }
+        ]
+    }
+]

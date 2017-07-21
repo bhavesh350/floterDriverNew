@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="?actionBarSize"
+            android:background="?colorPrimary">
+
+            <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/toolbar"
+                android:layout_width="fill_parent"
+                android:layout_height="?actionBarSize"
+                android:background="?colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:text="On Trip"
+                    android:textColor="@color/white"
+                    android:textSize="20.0sp"
+                    android:textStyle="bold" />
+            </android.support.v7.widget.Toolbar>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_above="@+id/ll_bottom"
+                android:layout_below="@+id/container_toolbar">
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_above="@+id/ll_bottom" />
+
+                <RelativeLayout
+                    android:id="@+id/locationMarker"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom">
+
+                    <TextView
+                        android:id="@+id/txt_direction"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_direction"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/dim_5"
+                        android:text="Show Direction to User"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/dim_18" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/white"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white">
+
+                            <TextView
+                                android:id="@+id/txt_user_name"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toLeftOf="@+id/btn_call_user"
+                                android:maxLines="2"
+                                android:paddingLeft="@dimen/dim_10"
+                                android:textColor="@color/blue_text"
+                                android:textSize="@dimen/dim_18" />
+
+                            <Button
+                                android:id="@+id/btn_call_user"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="right"
+                                android:background="@color/colorPrimaryDark"
+                                android:drawableLeft="@drawable/ic_call"
+                                android:drawablePadding="10.0dip"
+                                android:paddingLeft="@dimen/dim_10"
+                                android:paddingRight="@dimen/dim_10"
+                                android:src="@drawable/ic_call"
+                                android:text="call"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/dim_20"
+                                android:visibility="visible" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+            </FrameLayout>
+
+            <RelativeLayout
+                android:id="@+id/ll_bottom"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <Button
+                    android:id="@+id/btn_arrived"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:text="Tap When Arrived"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dim_20"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btn_loading_done"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:text="Tap When Loading Done"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dim_20"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_unloading_done"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:text="Tap When Unloading Done"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dim_20"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_start"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:text="Start Trip"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dim_20"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_reached"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:text="Tap When Reached Destination"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dim_18"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_stop"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:text="Stop Trip"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dim_20"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_feedback"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="@dimen/dim_20"
+                android:background="@drawable/rounded_top"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="@dimen/dim_10"
+                    android:text="Your Trip"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/dim_20" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.0px"
+                    android:background="@color/colorPrimaryDark" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_profile"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txt_request"
+                    android:layout_marginTop="@dimen/dim_20">
+
+                    <TextView
+                        android:id="@+id/txt_trip_payment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="Rs. 50"
+                        android:textColor="@color/blue_text"
+                        android:textSize="@dimen/dim_50"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_pay_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txt_trip_payment"
+                        android:layout_centerHorizontal="true"
+                        android:padding="10.0dip"
+                        android:text="Paymode : Cash"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/dim_20"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <RatingBar
+                    android:id="@+id/rating_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/dim_20"
+                    android:rating="2.5"
+                    android:stepSize="0.5" />
+
+                <TextView
+                    android:id="@+id/txt_rating_status"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="@dimen/dim_10"
+                    android:text="Average"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/dim_18" />
+
+                <RadioGroup
+                    android:id="@+id/radio_group"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dim_20"
+                    android:layout_marginTop="@dimen/dim_10"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/radio1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_20"
+                        android:checked="true"
+                        android:text="Thanks to Floter"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/dim_18" />
+
+                    <RadioButton
+                        android:id="@+id/radio2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_20"
+                        android:checked="false"
+                        android:text="Trip was good"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/dim_18" />
+
+                    <RadioButton
+                        android:id="@+id/radio3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/dim_20"
+                        android:layout_marginLeft="@dimen/dim_20"
+                        android:checked="false"
+                        android:text="Customer behaviour was not good"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/dim_18" />
+                </RadioGroup>
+
+                <Button
+                    android:id="@+id/btn_submit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:text="Submit After Payment"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dim_18"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <fragment
+        android:id="@+id/fragment_navigation_drawer"
+        android:name="cargo.floter.driver.fragments.FragmentDrawer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="start"
+        app:layout="@layout/fragment_navigation_drawer" />
+</android.support.v4.widget.DrawerLayout>

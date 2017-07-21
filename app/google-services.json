@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "414245249155",
+    "firebase_url": "https://floter-user.firebaseio.com",
+    "project_id": "floter-user",
+    "storage_bucket": "floter-user.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414245249155:android:a12cb37efd2a11e7",
+        "android_client_info": {
+          "package_name": "cargo.floter.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "414245249155-p5dqoct04a77a6reg4of8f8ac7075vc8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cargo.floter.user",
+            "certificate_hash": "bdb0db5e92d86effb88a82ffac24aa8022e87444"
+          }
+        },
+        {
+          "client_id": "414245249155-27v65tt17lo30ddobvbojtjprpcnhto4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWGcYXq7jQJ6fOkqcLzP_604WLmwpO3Uk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "414245249155-27v65tt17lo30ddobvbojtjprpcnhto4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414245249155:android:f4e7ece773af6af6",
+        "android_client_info": {
+          "package_name": "cargo.floter.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "414245249155-fcba8isv856d4geq2h6ouebaf31r68d8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cargo.floter.driver",
+            "certificate_hash": "22b325bfd1a68978f8b6e23c7afc12bd0946fabb"
+          }
+        },
+        {
+          "client_id": "414245249155-27v65tt17lo30ddobvbojtjprpcnhto4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWGcYXq7jQJ6fOkqcLzP_604WLmwpO3Uk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "414245249155-27v65tt17lo30ddobvbojtjprpcnhto4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

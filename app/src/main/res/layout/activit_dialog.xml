@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/txt_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Pickup Request From"
+        android:textColor="@color/white"
+        android:textSize="@dimen/dim_18" />
+
+    <RelativeLayout
+        android:id="@+id/rl_profile"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dim_60"
+        android:layout_below="@+id/txt_request"
+        android:layout_marginLeft="@dimen/dim_20"
+        android:layout_marginRight="@dimen/dim_20"
+        android:layout_marginTop="@dimen/dim_10">
+
+        <com.pkmmte.view.CircularImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="@dimen/dim_60"
+            android:layout_height="@dimen/dim_60"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dim_3"
+            android:clickable="false"
+            android:src="@drawable/seach_list_default_pic"
+            app:border="true"
+            app:border_color="@color/colorPrimaryDark"
+            app:border_width="1dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/profile_picture">
+
+            <TextView
+                android:id="@+id/txt_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dim_25"
+                android:text="Bhavesh Soni"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/dim_16"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_user_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_user_name"
+                android:layout_marginLeft="@dimen/dim_25"
+                android:drawableLeft="@drawable/rating_star_inactive"
+                android:drawablePadding="@dimen/dim_10"
+                android:text="4.5"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/dim_16" />
+
+            <TextView
+                android:id="@+id/txt_est_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="Est Price\nRs. 500"
+                android:textSize="@dimen/dim_20" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_profile"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/txt_source_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dim_20"
+            android:gravity="center"
+            android:padding="@dimen/dim_5"
+            android:text="55, Ignue road, Anupam Enclave, New Delhi 110030"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/dim_18" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dim_5"
+            android:gravity="center"
+            android:text="To"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/dim_18" />
+
+        <TextView
+            android:id="@+id/txt_dest_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dim_5"
+            android:gravity="center"
+            android:padding="@dimen/dim_5"
+            android:text="Green Park, New Delhi"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/dim_18" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dim_15"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_est_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Est. Time : 25 Min"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/txt_est_distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Est. Distance : 6.3 Km"
+                android:textColor="@color/colorPrimaryDark" />
+        </LinearLayout>
+
+        <cargo.floter.driver.utils.CircleCountDownView
+            android:id="@+id/countDownView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"></cargo.floter.driver.utils.CircleCountDownView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/dim_40">
+
+        <Button
+            android:id="@+id/ride_decline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@color/colorPrimary"
+            android:text="Decline"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dim_18"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <Button
+            android:id="@+id/ride_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@color/colorPrimary"
+            android:text="Accept"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dim_18"
+            android:textStyle="bold" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0891CF</color>
+    <color name="colorPrimaryDark">#0E577D</color>
+    <color name="colorAccent">#0E577D</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="fb_blue">#3C5596</color>
+    <color name="gmail_red">#D03527</color>
+    <color name="blue_bg">#156CB3</color>
+    <color name="blue_text">#166DB6</color>
+    <color name="green_bg">#87B951</color>
+    <color name="red">#ED1C24</color>
+
+</resources>
