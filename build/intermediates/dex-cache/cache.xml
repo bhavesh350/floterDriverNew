@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\99b32dbd272de9e8698de96c9c1895a35288cea7\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="c03bf57f358aa10d253f21989e93bcf6014b3b17">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_4905c514a09e72dc2e1b06821bd60f60f3d68c95.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\e2bdbbcb338ba0f0009362a233912dc3da17dd35\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="cd7951e04cfb9a8bf008d544a478d9a8d8192d38">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_8473d69afe5d58d34fbbd96412da47b64c79e293.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\46f56edfbe163ceb0b4172f00158463aa6aedca6\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="e2719c102dca3a7a5b02ce07f769362da6ddb4ab">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_466b79950e6270b31136b31c25ea6b63a70742e7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\096509f331673eae94059ab1ae3eb218226bd5ab\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="0d191c1a09e4892d059e5ce749e4ad4e08129e35">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_fa21b2d0b9cbb926bf3e5af24aac13312526e8e4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\db854ede91407784b4912a63a4c4994c03645eee\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="02741d05d4b697fba5e279e9881aaa1da0ca7c7f">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_1143428892f8db11046e895f110dc374ada4bea8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\23ab61906ba608696a2a88e6599aa523eb60c950\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="15b049fedbd8e3926bf99d9e45dfc9b2a1043bb9">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_71760751c51b916a8e8b864aa294309263541820.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.1.1\support-annotations-25.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="b59b6ee8d6ecc03e672d253800430343493a6ed8">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\support-annotations-25.1.1_2c38958d75788187b4d5566ee6f6506653fc2057.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\8d299401b2510c103e69cdc8c48f40ef2fce1a2c\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="a8ae156c2726ac9c56daaf4b49452ec2cdb7bba9">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_bed1c3cc63656bc0b119417b69c699d0cc9aed34.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\d6a57ad17b384f1d4790df2d4724fec1718bad00\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="7bde4c34162092e0a77e7f12dc85ed77c484cf5c">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_8340572fbec5d7ce8fb1cdef8878f43b113ab475.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\a0bd0157fb8bb8832198e3672f3661fb20ff6b0e\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="3e04ac8ca644ea7baddf6fdcf72e15c79e9df94a">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_a45eef7006fa5b5276ad22800602a4c89edd040c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\0b2450f5ed07368c5711d30fc82d589cba182b5d\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="c9649557905bf7a80fca9e0d54cbcb7662627860">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_ab54d8007919789fe1e3022efe96c0223518b493.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\c99f22c58b0c11c5fc53844ea690be26e636f1e1\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="0fb891e8f0cfba0513043a7bb357513d229ca2cd">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_5ab3fc6c4f2c2645e5bf0a726714d545122c0038.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="ecb496cc08dd52551fc5ec6db3bc0632e95a89bb">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_e2a3fafce5d9292c2e028a455214773e24a242de.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Aquad\.android\build-cache\14d86d526958aa436aa3128a3ed173ea556982bf\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Bhavesh\Floter_Driver_26_May\Floter new\FloterDriver\app\build\intermediates\pre-dexed\release\classes_f440eb2a450549a404e4fb8c450acabfe0c59e0d.jar" />
+    </item>
+
+</items>
