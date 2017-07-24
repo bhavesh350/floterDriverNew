@@ -215,11 +215,11 @@ public class CustomActivity extends AppCompatActivity implements
     public void postCall(Context c, String url, RequestParams p, String loadingMsg, final int callNumber) {
         if (!TextUtils.isEmpty(loadingMsg))
             cargo.floter.driver.application.MyApp.spinnerStart(c, loadingMsg);
+
         Log.d("URl:", url);
         Log.d("Request:", p.toString());
         AsyncHttpClient client = new AsyncHttpClient();
         client.setTimeout(30000);
-
         client.post(url, p, new JsonHttpResponseHandler() {
 
             @Override
@@ -231,15 +231,12 @@ public class CustomActivity extends AppCompatActivity implements
                 } catch (Exception e) {
                     responseCallback.onErrorReceived("No data available");
                 }
-
-
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 cargo.floter.driver.application.MyApp.spinnerStop();
-//                Log.d("error message:", throwable.getMessage());
                 if (statusCode == 0) {
                     responseCallback.onErrorReceived(getString(R.string.timeout));
                 } else {
@@ -250,7 +247,6 @@ public class CustomActivity extends AppCompatActivity implements
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 cargo.floter.driver.application.MyApp.spinnerStop();
-//                Log.d("error message:", throwable.getMessage());
                 if (statusCode == 0) {
                     responseCallback.onErrorReceived(getString(R.string.timeout));
                 } else {
@@ -264,7 +260,6 @@ public class CustomActivity extends AppCompatActivity implements
         if (!TextUtils.isEmpty(loadingMsg))
             cargo.floter.driver.application.MyApp.spinnerStart(c, loadingMsg);
         Log.d("URl:", url);
-//        Log.d("Request:", p.toString());
         AsyncHttpClient client = new AsyncHttpClient();
         client.setTimeout(30000);
         client.get(url, new JsonHttpResponseHandler() {
@@ -273,13 +268,7 @@ public class CustomActivity extends AppCompatActivity implements
             public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
                 cargo.floter.driver.application.MyApp.spinnerStop();
                 Log.d("Response:", response.toString());
-//                if (response.optString("status").equals("true")) {
                 responseCallback.onJsonObjectResponseReceived(response, callNumber);
-//                } else {
-//                    responseCallback.onErrorReceived(response.optString("msg"));
-//                }
-
-
             }
 
             @Override
