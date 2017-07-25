@@ -76,7 +76,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     sendNewRideNotification("New Trip Assigned by Floter\nclick to open.", remoteMessage.getData().get("trip_id"));
                 } else if (tripStatus.equals(TripStatus.Finished.name())) {
                     sendNotification(dataMap.get(MyApp.EXTRA_MESSAGE));
-                } else if(tripStatus.equals(TripStatus.Upcoming.name())){
+                } else if(tripStatus.equals("upcoming")||tripStatus.equals(TripStatus.Upcoming.name())){
 //                    MyApp.setStatus(AppConstants.IS_ON_TRIP, true);
 //                    MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, remoteMessage.getData().get("trip_id"));
                     sendUpcomingNotification("New Upcoming Trip has been Assigned by Floter\nclick to open.", remoteMessage.getData().get("trip_id"));

@@ -12,12 +12,12 @@
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\switch_thumb_material_dark.xml"
     },
     {
-        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\switch_thumb_material_light.xml",
-        "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\switch_thumb_material_light.xml"
-    },
-    {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\abc_secondary_text_material_dark.xml",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\abc_secondary_text_material_dark.xml"
+    },
+    {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\switch_thumb_material_light.xml",
+        "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\switch_thumb_material_light.xml"
     },
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\design_tint_password_toggle.xml",
@@ -28,12 +28,12 @@
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\abc_tint_switch_thumb.xml"
     },
     {
-        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\abc_tint_btn_checkable.xml",
-        "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\abc_tint_btn_checkable.xml"
-    },
-    {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\abc_primary_text_disable_only_material_light.xml",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\abc_primary_text_disable_only_material_light.xml"
+    },
+    {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\abc_tint_btn_checkable.xml",
+        "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\color\\abc_tint_btn_checkable.xml"
     },
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\color\\abc_btn_colored_borderless_text_material.xml",

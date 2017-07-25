@@ -16,6 +16,10 @@
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-mdpi-v4\\abc_tab_indicator_mtrl_alpha.9.png"
     },
     {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\ic_action_name.png",
+        "source": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\drawable-mdpi\\ic_action_name.png"
+    },
+    {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\abc_scrubber_control_to_pressed_mtrl_000.png",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-mdpi-v4\\abc_scrubber_control_to_pressed_mtrl_000.png"
     },
@@ -130,6 +134,10 @@
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\abc_textfield_default_mtrl_alpha.9.png",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-mdpi-v4\\abc_textfield_default_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\ic_call.png",
+        "source": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\drawable-mdpi\\ic_call.png"
     },
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\notification_bg_low_pressed.9.png",
@@ -258,6 +266,10 @@
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\abc_switch_track_mtrl_alpha.9.png",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-mdpi-v4\\abc_switch_track_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\ic_direction.png",
+        "source": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\drawable-mdpi\\ic_direction.png"
     },
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\notification_bg_normal_pressed.9.png",

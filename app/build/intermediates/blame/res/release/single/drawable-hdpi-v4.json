@@ -100,6 +100,10 @@
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-hdpi-v4\\abc_list_selector_disabled_holo_dark.9.png"
     },
     {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_call.png",
+        "source": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\drawable-hdpi\\ic_call.png"
+    },
+    {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\notification_bg_normal_pressed.9.png",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-hdpi-v4\\notification_bg_normal_pressed.9.png"
     },
@@ -264,6 +268,10 @@
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-hdpi-v4\\abc_list_selector_disabled_holo_light.9.png"
     },
     {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_action_name.png",
+        "source": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\drawable-hdpi\\ic_action_name.png"
+    },
+    {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\common_google_signin_btn_icon_light_normal.9.png",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\38fcc0e10b32df2a888c2b1a69b5cd5ebf4ebf7f\\output\\res\\drawable-hdpi-v4\\common_google_signin_btn_icon_light_normal.9.png"
     },
@@ -278,6 +286,10 @@
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\abc_ic_commit_search_api_mtrl_alpha.png",
         "source": "C:\\Users\\Aquad\\.android\\build-cache\\e8fe02b5d3b109ac8c7c064c33421b30765dd3d5\\output\\res\\drawable-hdpi-v4\\abc_ic_commit_search_api_mtrl_alpha.png"
+    },
+    {
+        "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_direction.png",
+        "source": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\src\\main\\res\\drawable-hdpi\\ic_direction.png"
     },
     {
         "merged": "C:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\abc_btn_radio_to_on_mtrl_000.png",
