@@ -95,6 +95,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/dim_20"
             android:gravity="center"
+            android:maxLines="2"
             android:padding="@dimen/dim_5"
             android:text="55, Ignue road, Anupam Enclave, New Delhi 110030"
             android:textColor="@color/colorPrimaryDark"
@@ -116,6 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/dim_5"
+            android:maxLines="2"
             android:gravity="center"
             android:padding="@dimen/dim_5"
             android:text="Green Park, New Delhi"
@@ -152,7 +154,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"></cargo.floter.driver.utils.CircleCountDownView>
+            android:layout_marginTop="10dp"></cargo.floter.driver.utils.CircleCountDownView>
 
     </LinearLayout>
 
@@ -161,7 +163,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/dim_40">
+        android:layout_marginTop="@dimen/dim_45">
 
         <Button
             android:id="@+id/ride_decline"

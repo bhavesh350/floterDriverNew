@@ -1,1 +1,0 @@
-IDRViewer.config = {"pagecount":8,"title":"","author":"USER","fileName":"GENERAL_TERMS_docxfor_appp.pdf","bounds":[[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286]],"bookmarks":[],"thumbnailType":"jpg","pageType":"html","pageLabels":[]};

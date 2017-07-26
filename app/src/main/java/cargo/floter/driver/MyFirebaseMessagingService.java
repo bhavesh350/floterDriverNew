@@ -13,10 +13,6 @@ import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import cargo.floter.driver.application.MyApp;
-import cargo.floter.driver.application.SingleInstance;
-import cargo.floter.driver.model.TripStatus;
-import cargo.floter.driver.utils.AppConstants;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -24,6 +20,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
+
+import cargo.floter.driver.application.MyApp;
+import cargo.floter.driver.application.SingleInstance;
+import cargo.floter.driver.model.TripStatus;
+import cargo.floter.driver.utils.AppConstants;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
@@ -44,19 +45,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         if (MyApp.getStatus(AppConstants.IS_OPEN)) {
                             i = new Intent("cargo.floter.driver.RIDE");
                             i.putExtra("TYPE", "NEW_TRIP");
+//                            timestamp
+                            long millis = 0;
                             try {
-                                SingleInstance.getInstance().setJsonTripPayload(new JSONObject(remoteMessage.getData().get("object")));
+                                JSONObject o = new JSONObject(remoteMessage.getData().get("object"));
+                                millis = o.optLong("timestamp");
 
+                                SingleInstance.getInstance().setJsonTripPayload(o);
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                            }
+                            if ((System.currentTimeMillis() - millis) > 30000) {
+                                return;
                             }
                             sendBroadcast(i);
                             return;
                         }
+                        long millis = 0;
                         try {
-                            SingleInstance.getInstance().setJsonTripPayload(new JSONObject(remoteMessage.getData().get("object")));
+                            JSONObject o = new JSONObject(remoteMessage.getData().get("object"));
+                            millis = o.optLong("timestamp");
+                            SingleInstance.getInstance().setJsonTripPayload(o);
                         } catch (JSONException e2) {
                             e2.printStackTrace();
+                        }
+                        if ((System.currentTimeMillis() - millis) > 30000) {
+                            return;
                         }
                         sendNewRideNotification("New booking arrived\nclick to open.", remoteMessage.getData().get("trip_id"));
                     }

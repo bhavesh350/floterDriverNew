@@ -1,4 +1,0 @@
-#Tue Jul 25 11:42:05 IST 2017
-base.0=C\:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
-renamed.0=classes.dex
-file.0=C\:\\Bhavesh\\Floter_Driver_26_May\\Floter new\\FloterDriver\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex

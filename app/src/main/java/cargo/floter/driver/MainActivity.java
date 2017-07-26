@@ -1,7 +1,6 @@
 package cargo.floter.driver;
 
 import android.Manifest;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +17,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -36,17 +34,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import cargo.floter.driver.application.MyApp;
-import cargo.floter.driver.application.SingleInstance;
-import cargo.floter.driver.fragments.FragmentDrawer;
-import cargo.floter.driver.model.Driver;
-import cargo.floter.driver.model.NearbyUser;
-import cargo.floter.driver.model.RateCard;
-import cargo.floter.driver.model.Trip;
-import cargo.floter.driver.model.TripStatus;
-import cargo.floter.driver.utils.AppConstants;
-import cargo.floter.driver.utils.CircleCountDownView;
-import cargo.floter.driver.utils.LocationProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -57,7 +44,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -89,6 +75,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import cargo.floter.driver.application.MyApp;
+import cargo.floter.driver.application.SingleInstance;
+import cargo.floter.driver.fragments.FragmentDrawer;
+import cargo.floter.driver.model.Driver;
+import cargo.floter.driver.model.NearbyUser;
+import cargo.floter.driver.model.RateCard;
+import cargo.floter.driver.model.Trip;
+import cargo.floter.driver.model.TripStatus;
+import cargo.floter.driver.utils.AppConstants;
+import cargo.floter.driver.utils.CircleCountDownView;
+import cargo.floter.driver.utils.LocationProvider;
 import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends CustomActivity implements CustomActivity.ResponseCallback,
@@ -159,6 +156,16 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             if (intent.getStringExtra("TYPE").equals("NEW_TRIP")) {
                 this.isTimerDialogShown = true;
                 JSONObject o = SingleInstance.getInstance().getJsonTripPayload();
+                if (o == null) {
+                    return;
+                }
+                long millis = o.optLong("timestamp");
+                if ((System.currentTimeMillis() - millis) > 30000) {
+                    MyApp.popMessage("Floter Message", "You have missed the chance to get this trip." +
+                            "\nTry to accept trip within 30 seconds from next time onwards." +
+                            "\nThank you.", getContext());
+                    return;
+                }
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 View mView = getLayoutInflater().inflate(R.layout.activit_dialog, null);
                 Button decline = (Button) mView.findViewById(R.id.ride_decline);
@@ -206,7 +213,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 countDownTimer.start();
                 decline.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
-                        MainActivity.this.isTimerDialogShown = false;
+
                         Toast.makeText(MainActivity.this, "Ride Declined", Toast.LENGTH_SHORT).show();
                         countDownTimer.cancel();
                         mp.stop();
@@ -378,7 +385,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     countDownTimer.start();
                     decline.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View view) {
-                            MainActivity.this.isTimerDialogShown = false;
                             Toast.makeText(MainActivity.this, "Ride Declined", Toast.LENGTH_SHORT).show();
                             countDownTimer.cancel();
                             mp.stop();
@@ -758,6 +764,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 e.printStackTrace();
             }
         } else if (o.optString("status").equals("OK") && callNumber == 5) {
+            isTimerDialogShown = false;
             Trip t = null;
             try {
                 t = new Gson().fromJson(o.getJSONObject("response").toString(), Trip.class);

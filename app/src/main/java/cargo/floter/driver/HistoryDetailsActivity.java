@@ -51,7 +51,7 @@ public class HistoryDetailsActivity extends CustomActivity {
         address_src.setText(t.getTrip_from_loc());
         address_dest.setText(t.getTrip_to_loc());
         user_name.setText(t.getUser().getU_fname() + " " + t.getUser().getU_lname());
-        trip_fare.setText(t.getTrip_pay_amount());
+        trip_fare.setText(t.getTrip_fare());
         subtotal.setText(t.getTrip_pay_amount());
         total.setText(t.getTrip_pay_amount());
         discount.setText(t.getTrip_promo_amt());
