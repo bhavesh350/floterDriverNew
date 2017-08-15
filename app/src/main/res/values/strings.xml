@@ -43,4 +43,5 @@
 
     <string name="invalid_lat_long_used">Invalid latitude or longitude used</string>
     <string name="call_permissions_not_granted">Cannot make a call without permission is granted</string>
+    <string name="some_error_occurred">Some error occurred, please try again.</string>
 </resources>

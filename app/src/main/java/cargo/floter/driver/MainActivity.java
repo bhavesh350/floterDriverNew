@@ -9,7 +9,9 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -219,7 +221,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                         mp.stop();
                         mp.release();
                         dialog.dismiss();
-                         callAcceptDeclineApi(false, SingleInstance.getInstance().getJsonTripPayload().toString());
+                        callAcceptDeclineApi(false, SingleInstance.getInstance().getJsonTripPayload().toString());
                     }
                 });
                 accept.setOnClickListener(new View.OnClickListener() {
@@ -318,6 +320,10 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
     public void onDestroy() {
         super.onDestroy();
         MyApp.setStatus(AppConstants.IS_OPEN, false);
+        try {
+            locationHandler.removeCallbacks(locationUpdateCallback);
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -584,7 +590,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             // TODO: Consider calling
             return;
         }
-
+        locationHandler.postDelayed(locationUpdateCallback, 5000);
     }
 
 
@@ -615,7 +621,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
 //         http://floter.in/floterapi/index.php/userapi/getnearbyuserlists?lat=25&lng=75&api_key=2869e53d41c273e80bb1e6e55fcdba55&miles=50
         p.put("lat", lat);
         p.put("lng", lng);
-        p.put("miles", 20);
+        p.put("miles", 12);
         p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
         postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
 
@@ -671,7 +677,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1010);
-                // for ActivityCompat#requestPermissions for more details.
             } else {
                 mMap.setMyLocationEnabled(true);
             }
@@ -679,7 +684,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
-//            getCompleteAddressString(location.getLatitude(), location.getLongitude());
 
         } else {
             Toast.makeText(getApplicationContext(),
@@ -775,7 +779,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 MyApp.popMessage("Error!", "Trip not found...", getContext());
                 return;
             } else if (t.getTrip_status().equals(TripStatus.Cancelled.name()) || t.getTrip_status().equals(TripStatus.Declined.name())) {
-                if(t.getTrip_status().equals(TripStatus.Declined.name())){
+                if (t.getTrip_status().equals(TripStatus.Declined.name())) {
                     RequestParams pp = new RequestParams();
                     pp.put("message", "Trip Accepted");
                     pp.put("trip_id", t.getTrip_id());
@@ -783,7 +787,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     pp.put("android", t.getUser().getU_device_token());
                     AsyncHttpClient client = new AsyncHttpClient();
                     client.setTimeout(30000);
-//             http://floter.in/floterapi/push/RiderPushNotification?message={"json":"json"}&android=1hTgw2d_BrDwhYH_lN&trip_id=10&trip_status=accept&object={"json":"json"}
                     client.post("http://floter.in/floterapi/push/RiderPushNotification?",
                             pp, new JsonHttpResponseHandler() {
 
@@ -791,12 +794,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                                 public void onSuccess(int statusCode, Header[] headers, final String response) {
                                     Log.d("Response:", response.toString());
                                     MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
-//                                    startActivity(new Intent(getContext(), OnTripActivity.class));
-//                                    RequestParams pp = new RequestParams();
-//                                    pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
-//                                    pp.put("d_is_available", 1);
-//                                    pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-//                                    MainActivity.this.postCall(MainActivity.this.getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 13);
                                 }
 
                                 @Override
@@ -805,12 +802,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                                         MyApp.popMessage("Error!", "Timeout error, wait for other ride.", getContext());
                                     } else {
                                         MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
-//                                        startActivity(new Intent(getContext(), OnTripActivity.class));
-//                                        RequestParams pp = new RequestParams();
-//                                        pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
-//                                        pp.put("d_is_available", 0);
-//                                        pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-//                                        MainActivity.this.postCall(MainActivity.this.getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 13);
                                     }
                                 }
                             });
@@ -832,17 +823,17 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
 
             AsyncHttpClient ac = new AsyncHttpClient();
             ac.setTimeout(30000);
-            RequestParams rp=new RequestParams();
-            rp.put("module","TRANS_SMS");
-            rp.put("apikey","268de3c4-5565-11e7-94da-0200cd936042");
-            rp.put("to",t.getUser().getU_mobile());
-            rp.put("from","FLOTER");
-            rp.put("msg","Namaste! "+t.getUser().getU_fname()+",\n"
-            +"Driver : "+
-            t.getDriver().getD_name()+"("+t.getDriver().getD_phone()+ ") is on the way for order FDA-"+t.getTrip_id()
-            +".\nThank you.");
+            RequestParams rp = new RequestParams();
+            rp.put("module", "TRANS_SMS");
+            rp.put("apikey", "268de3c4-5565-11e7-94da-0200cd936042");
+            rp.put("to", t.getUser().getU_mobile());
+            rp.put("from", "FLOTER");
+            rp.put("msg", "Namaste! " + t.getUser().getU_fname() + ",\n"
+                    + "Driver : " +
+                    t.getDriver().getD_name() + "(" + t.getDriver().getD_phone() + ") is on the way for order FDA-" + t.getTrip_id()
+                    + ".\nThank you.");
 
-            ac.post("https://2factor.in/API/R1/?", rp,new JsonHttpResponseHandler());
+            ac.post("https://2factor.in/API/R1/?", rp, new JsonHttpResponseHandler());
 
 //             http://floter.in/floterapi/push/RiderPushNotification?message={"json":"json"}&android=1hTgw2d_BrDwhYH_lN&trip_id=10&trip_status=accept&object={"json":"json"}
             client.post("http://floter.in/floterapi/push/RiderPushNotification?",
@@ -911,6 +902,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         this.mMap.setMaxZoomPreference(15.5f);
         return bounds;
     }
+
     @Override
     public void onJsonArrayResponseReceived(JSONArray a, int callNumber) {
 
@@ -918,7 +910,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
 
     @Override
     public void onErrorReceived(String error) {
-        MyApp.showMassage(getContext(), error);
+//        MyApp.showMassage(getContext(), error);
     }
 
 
@@ -1209,4 +1201,49 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             }
         });
     }
+
+
+    private Runnable locationUpdateCallback = new Runnable() {
+        @Override
+        public void run() {
+
+            LocationManager locationManager = (LocationManager)
+                    getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+
+            if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                return;
+            }
+            Location location = locationManager.getLastKnownLocation(locationManager
+                    .getBestProvider(criteria, false));
+            currentLocation = location;
+            {
+                try {
+                    RequestParams p = new RequestParams();
+                    p.put("lat", currentLocation.getLatitude());
+                    p.put("lng", currentLocation.getLongitude());
+                    p.put("miles", 12);
+                    p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+                    postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
+
+                    changeMap(location);
+                    RequestParams pp = new RequestParams();
+                    pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
+                    pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+                    pp.put("d_lat", currentLocation.getLatitude() + "");
+                    pp.put("d_lng", currentLocation.getLongitude() + "");
+                    pp.put("d_degree", Float.valueOf(location.getBearing()));
+                    postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            locationHandler.postDelayed(locationUpdateCallback, 5000);
+
+        }
+    };
+    private Handler locationHandler = new Handler();
 }
