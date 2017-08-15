@@ -44,7 +44,17 @@ public class HistoryDetailsActivity extends CustomActivity {
         total = (TextView) findViewById(R.id.total);
 
         Trip t = SingleInstance.getInstance().getHistoryTrip();
-        txt_date_time.setText(MyApp.convertTime(t.getTrip_modified()).replace(" ", " at "));
+        try {
+            txt_date_time.setText(MyApp.convertTime(t.getTrip_modified()).replace(" ", " at "));
+        } catch (Exception e) {
+            try {
+                txt_date_time.setText(MyApp.convertTime(t.getTrip_created()).replace(" ", " at "));
+            } catch (Exception eo) {
+                MyApp.showMassage(HistoryDetailsActivity.this,getString(R.string.some_error_occurred));
+                finish();
+                return;
+            }
+        }
         txt_cost.setText("Rs. " + t.getTrip_pay_amount());
         txt_truck_type.setText(t.getDriver().getCar_name());
         payment_mode.setText(t.getTrip_pay_mode());

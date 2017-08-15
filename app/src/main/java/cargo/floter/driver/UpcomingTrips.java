@@ -9,19 +9,24 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
+
 import cargo.floter.driver.CustomActivity.ResponseCallback;
 import cargo.floter.driver.adapter.UpcomingTripsAdapter;
 import cargo.floter.driver.application.MyApp;
 import cargo.floter.driver.model.Trip;
 import cargo.floter.driver.model.TripStatus;
 import cargo.floter.driver.utils.AppConstants;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
 import cz.msebera.android.httpclient.Header;
+
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,17 +49,17 @@ public class UpcomingTrips extends CustomActivity implements ResponseCallback {
         public void onSuccess(int statusCode, Header[] headers, String response) {
             Log.d("Response:", response.toString());
             MyApp.setStatus(AppConstants.IS_ON_TRIP, true);
-            UpcomingTrips.this.startActivity(new Intent(UpcomingTrips.this.getContext(), OnTripActivity.class));
-            UpcomingTrips.this.finishAffinity();
+            startActivity(new Intent(getContext(), OnTripActivity.class));
+            finishAffinity();
         }
 
         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
             if (statusCode == 0) {
-                MyApp.popMessage("Error!", "Timeout error, wait for other ride.", UpcomingTrips.this.getContext());
+                MyApp.popMessage("Error!", "Timeout error, wait for other ride.", getContext());
                 return;
             }
             MyApp.setStatus(AppConstants.IS_ON_TRIP, true);
-            UpcomingTrips.this.startActivity(new Intent(UpcomingTrips.this.getContext(), OnTripActivity.class));
+            startActivity(new Intent(getContext(), OnTripActivity.class));
         }
     }
 
@@ -62,16 +67,16 @@ public class UpcomingTrips extends CustomActivity implements ResponseCallback {
         super.onCreate(savedInstanceState);
         setResponseListener(this);
         setContentView(R.layout.activity_history);
-        this.toolbar = (Toolbar) findViewById(R.id.toolbar);
-        this.toolbar_title = (TextView) this.toolbar.findViewById(R.id.toolbar_title);
-        setSupportActionBar(this.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar_title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle((CharSequence) "");
-        this.rv_history = (RecyclerView) findViewById(R.id.rc_history);
-        this.toolbar_title.setText("Upcoming Requests");
+        rv_history = (RecyclerView) findViewById(R.id.rc_history);
+        toolbar_title.setText("Upcoming Requests");
         loadHistory();
     }
 
@@ -85,9 +90,11 @@ public class UpcomingTrips extends CustomActivity implements ResponseCallback {
     public void onJsonObjectResponseReceived(JSONObject o, int callNumber) {
         if (callNumber == 1 && o.optString("status").equals("OK")) {
             try {
-                this.adapter = new UpcomingTripsAdapter(this, (List) new Gson().fromJson(o.getJSONArray("response").toString(), new C05381().getType()));
-                this.rv_history.setLayoutManager(new LinearLayoutManager(this, 1, false));
-                this.rv_history.setAdapter(this.adapter);
+                List<Trip> list = (List) new Gson().fromJson(o.getJSONArray("response").toString(), new C05381().getType());
+                // TODO: 8/15/2017 filter list according to expired list, do not show the expired trips in upcoming section.
+                adapter = new UpcomingTripsAdapter(this, list);
+                rv_history.setLayoutManager(new LinearLayoutManager(this, 1, false));
+                rv_history.setAdapter(adapter);
             } catch (JSONException e) {
                 MyApp.popMessageAndFinish("Message", "No upcoming request available.", this);
                 e.printStackTrace();

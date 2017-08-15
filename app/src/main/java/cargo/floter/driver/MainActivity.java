@@ -219,7 +219,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                         mp.stop();
                         mp.release();
                         dialog.dismiss();
-                        MainActivity.this.callAcceptDeclineApi(false, SingleInstance.getInstance().getJsonTripPayload().toString());
+                         callAcceptDeclineApi(false, SingleInstance.getInstance().getJsonTripPayload().toString());
                     }
                 });
                 accept.setOnClickListener(new View.OnClickListener() {
@@ -229,7 +229,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                         mp.stop();
                         mp.release();
                         dialog.dismiss();
-                        MainActivity.this.callAcceptDeclineApi(true, SingleInstance.getInstance().getJsonTripPayload().toString());
+                        callAcceptDeclineApi(true, SingleInstance.getInstance().getJsonTripPayload().toString());
                     }
                 });
                 dialog.show();
@@ -829,6 +829,21 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             pp.put("android", t.getUser().getU_device_token());
             AsyncHttpClient client = new AsyncHttpClient();
             client.setTimeout(30000);
+
+            AsyncHttpClient ac = new AsyncHttpClient();
+            ac.setTimeout(30000);
+            RequestParams rp=new RequestParams();
+            rp.put("module","TRANS_SMS");
+            rp.put("apikey","268de3c4-5565-11e7-94da-0200cd936042");
+            rp.put("to",t.getUser().getU_mobile());
+            rp.put("from","FLOTER");
+            rp.put("msg","Namaste! "+t.getUser().getU_fname()+",\n"
+            +"Driver : "+
+            t.getDriver().getD_name()+"("+t.getDriver().getD_phone()+ ") is on the way for order FDA-"+t.getTrip_id()
+            +".\nThank you.");
+
+            ac.post("https://2factor.in/API/R1/?", rp,new JsonHttpResponseHandler());
+
 //             http://floter.in/floterapi/push/RiderPushNotification?message={"json":"json"}&android=1hTgw2d_BrDwhYH_lN&trip_id=10&trip_status=accept&object={"json":"json"}
             client.post("http://floter.in/floterapi/push/RiderPushNotification?",
                     pp, new JsonHttpResponseHandler() {

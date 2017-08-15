@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,6 +56,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -126,6 +130,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     private TextView txt_rating_status;
     private TextView txt_trip_payment;
     private TextView txt_user_name;
+    private Handler locationHandler = new Handler();
 
     class C02292 implements RatingBar.OnRatingBarChangeListener {
         C02292() {
@@ -133,15 +138,15 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
 
         public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
             if (v <= 1.0f) {
-                OnTripActivity.this.txt_rating_status.setText("Bad");
+                txt_rating_status.setText("Bad");
             } else if (v > 1.0f && ((double) v) < 2.5d) {
-                OnTripActivity.this.txt_rating_status.setText("Below Average");
+                txt_rating_status.setText("Below Average");
             } else if (((double) v) >= 2.5d && ((double) v) < 3.5d) {
-                OnTripActivity.this.txt_rating_status.setText("Average");
+                txt_rating_status.setText("Average");
             } else if (((double) v) < 3.5d || ((double) v) >= 4.5d) {
-                OnTripActivity.this.txt_rating_status.setText("Excellent");
+                txt_rating_status.setText("Excellent");
             } else {
-                OnTripActivity.this.txt_rating_status.setText("Good");
+                txt_rating_status.setText("Good");
             }
         }
     }
@@ -152,10 +157,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
 
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra("TYPE").equals("CANCELLED")) {
-                OnTripActivity.this.currentTrip.setTrip_status(TripStatus.Cancelled.name());
+                currentTrip.setTrip_status(TripStatus.Cancelled.name());
                 MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
                 MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
-                OnTripActivity.this.startActivity(new Intent(OnTripActivity.this.getContext(), MainActivity.class));
+                startActivity(new Intent(getContext(), MainActivity.class));
+                MyApp.setSharedPrefString("button", "");
             }
         }
     }
@@ -234,7 +240,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             } catch (Exception e) {
             }
             if (f < 3.0f) {
-                f = 3.0f;
+                f = 2.0f;
             }
             RateCard.RateCardResponse r = null;
             try {
@@ -249,41 +255,43 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             MyApp.spinnerStop();
             RequestParams p;
             if (r == null) {
-                if (OnTripActivity.this.isCalculation) {
-                    p = new RequestParams();
-                    p.put("trip_id", OnTripActivity.this.currentTrip.getTrip_id());
-                    p.put("driver_id", OnTripActivity.this.currentTrip.getDriver_id());
-                    p.put("user_id", OnTripActivity.this.currentTrip.getUser_id());
-                    p.put("u_fname", OnTripActivity.this.currentTrip.getUser().getU_fname() + " " + OnTripActivity.this.currentTrip.getUser().getU_lname());
-                    p.put("d_fname", OnTripActivity.this.currentTrip.getDriver().getD_name());
-                    p.put("pay_date", OnTripActivity.this.currentTrip.getTrip_modified().split(" ")[0]);
-                    p.put("pay_mode", OnTripActivity.this.currentTrip.getTrip_pay_mode());
-                    int payAmount = 0;
-                    try {
-                        payAmount = Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) % 10));
-                    } catch (Exception e) {
-                    }
-                    tripFare = payAmount + "";
-                    p.put("pay_amount", Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) % 10)));
-                    p.put("pay_status", "PENDING");
-                    p.put("promo_id", "");
-                    p.put("order_id", "ORDER_" + OnTripActivity.this.currentTrip.getTrip_id());
-                    p.put("transaction_id", "00000" + OnTripActivity.this.currentTrip.getTrip_id());
-                    p.put("pay_promo_code", OnTripActivity.this.currentTrip.getTrip_promo_code());
-                    if (currentTrip.getTrip_promo_code().equals("FIRST50")) {
-                        p.put("pay_promo_amt", "50");
-                        payAmount = payAmount - 50;
-                        p.put("pay_amount", payAmount);
-                    } else if (currentTrip.getTrip_promo_code().equals("FLOTER05")) {
-                        p.put("pay_promo_amt", (payAmount - (int) (payAmount * 0.05)) + "");
-                        payAmount = payAmount - (int) (payAmount * 0.05);
-                        p.put("pay_amount", payAmount);
-                    }
-
-                    OnTripActivity.this.postCall(OnTripActivity.this.getContext(), AppConstants.BASE_PAYMENT + "save?", p, "Creating invoice...", 7);
+//                MyApp.showMassage(getContext(),"Rate card is null and fare calculated as old");
+//                if (isCalculation) {
+                p = new RequestParams();
+                p.put("trip_id", currentTrip.getTrip_id());
+                p.put("driver_id", currentTrip.getDriver_id());
+                p.put("user_id", currentTrip.getUser_id());
+                p.put("u_fname", currentTrip.getUser().getU_fname() + " " + currentTrip.getUser().getU_lname());
+                p.put("d_fname", currentTrip.getDriver().getD_name());
+                p.put("pay_date", currentTrip.getTrip_modified().split(" ")[0]);
+                p.put("pay_mode", currentTrip.getTrip_pay_mode());
+                int payAmount = 0;
+                try {
+                    payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10));
+                } catch (Exception e) {
                 }
-            } else if (OnTripActivity.this.isCalculation) {
+                tripFare = payAmount + "";
+                p.put("pay_amount", Integer.parseInt(currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10)));
+                p.put("pay_status", "PENDING");
+                p.put("promo_id", "");
+                p.put("order_id", "ORDER_" + currentTrip.getTrip_id());
+                p.put("transaction_id", "00000" + currentTrip.getTrip_id());
+                p.put("pay_promo_code", currentTrip.getTrip_promo_code());
+                if (currentTrip.getTrip_promo_code().equals("FIRST50")) {
+                    p.put("pay_promo_amt", "50");
+                    payAmount = payAmount - 50;
+                    p.put("pay_amount", payAmount);
+                } else if (currentTrip.getTrip_promo_code().equals("FLOTER05")) {
+                    p.put("pay_promo_amt", (payAmount - (int) (payAmount * 0.05)) + "");
+                    payAmount = payAmount - (int) (payAmount * 0.05);
+                    p.put("pay_amount", payAmount);
+                }
+
+                postCall(getContext(), AppConstants.BASE_PAYMENT + "save?", p, "Creating invoice...", 7);
+//                }
+            } else if (isCalculation) {
                 int charge = Integer.parseInt(r.getBase_fare());
+
                 if (f > 2.0f) {
                     try {
                         charge = (int) (((float) charge) + ((f - 2.0f) * ((float) Integer.parseInt(r.getPrice_per_km()))));
@@ -291,7 +299,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     }
                 }
                 int freeTime = 0;
-                int loadUnloadTime = OnTripActivity.this.loadingUnloadingTime();
+                int loadUnloadTime = loadingUnloadingTime();
                 try {
                     freeTime = Integer.parseInt(r.getFree_load_unload_time());
                 } catch (Exception e4) {
@@ -303,14 +311,19 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     }
                 }
                 charge += (int) (((float) charge) * 0.0f);
+//                MyApp.showMassage(getContext(),"distance is: "+distance+" and fare is: "+charge);
                 p = new RequestParams();
-                p.put("trip_id", OnTripActivity.this.currentTrip.getTrip_id());
+                p.put("trip_id", currentTrip.getTrip_id());
                 p.put("trip_pay_amount", charge);
-                p.put("trip_actual_drop_lat", Double.valueOf(OnTripActivity.this.currentLocation.getLatitude()));
-                p.put("trip_actual_drop_lng", Double.valueOf(OnTripActivity.this.currentLocation.getLongitude()));
-                OnTripActivity.this.postCall(OnTripActivity.this.getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "Please wait...", 3);
+                p.put("trip_actual_drop_lat", Double.valueOf(currentLocation.getLatitude()));
+                p.put("trip_actual_drop_lng", Double.valueOf(currentLocation.getLongitude()));
+                postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "Please wait...", 3);
             }
-            OnTripActivity.this.mMap.addPolyline(polyLineOptions);
+            try {
+                mMap.addPolyline(polyLineOptions);
+            } catch (Exception e) {
+            }
+
         }
     }
 
@@ -325,10 +338,10 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     for (int j = 0; j < jLegs.length(); j++) {
                         JSONObject jDistance = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
                         HashMap<String, String> hmDistance = new HashMap();
-                        hmDistance.put("distance", jDistance.getString("text"));
+                        hmDistance.put("distance", jDistance.getString(FirebaseAnalytics.Param.VALUE));
                         JSONObject jDuration = ((JSONObject) jLegs.get(j)).getJSONObject("duration");
                         HashMap<String, String> hmDuration = new HashMap();
-                        hmDuration.put("duration", jDuration.getString("text"));
+                        hmDuration.put("duration", jDuration.getString(FirebaseAnalytics.Param.VALUE));
                         path.add(hmDistance);
                         path.add(hmDuration);
                         JSONArray jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
@@ -432,7 +445,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         }
 
         public void onConnectionFailed(ConnectionResult connectionResult) {
-            MyApp.showMassage(OnTripActivity.this.getContext(), "Location error " + connectionResult.getErrorCode());
+            MyApp.showMassage(getContext(), "Location error " + connectionResult.getErrorCode());
         }
     }
 
@@ -500,21 +513,23 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         public void onSuccess(int statusCode, Header[] headers, String response) {
             MyApp.spinnerStop();
             Log.d("Response:", response.toString());
-            OnTripActivity.this.btn_loading_done.setVisibility(View.VISIBLE);
-            OnTripActivity.this.btn_arrived.setVisibility(View.GONE);
+            btn_loading_done.setVisibility(View.VISIBLE);
+            btn_arrived.setVisibility(View.GONE);
+            MyApp.setSharedPrefString("button", "btn_arrived");
         }
 
         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
             MyApp.spinnerStop();
+            MyApp.setSharedPrefString("button", "");
             if (statusCode == 0) {
-                OnTripActivity.this.btn_loading_done.setVisibility(View.VISIBLE);
-                OnTripActivity.this.btn_arrived.setVisibility(View.GONE);
-                OnTripActivity.this.txt_direction.setText("Show Direction to Destination");
+                btn_loading_done.setVisibility(View.VISIBLE);
+                btn_arrived.setVisibility(View.GONE);
+                txt_direction.setText("Show Direction to Destination");
                 return;
             }
-            OnTripActivity.this.btn_loading_done.setVisibility(View.VISIBLE);
-            OnTripActivity.this.btn_arrived.setVisibility(View.GONE);
-            OnTripActivity.this.txt_direction.setText("Show Direction to Destination");
+            btn_loading_done.setVisibility(View.VISIBLE);
+            btn_arrived.setVisibility(View.GONE);
+            txt_direction.setText("Show Direction to Destination");
         }
     }
 
@@ -572,6 +587,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             startActivity(new Intent(getContext(), MainActivity.class));
+            MyApp.setSharedPrefString("button", "");
             finishAffinity();
         }
         this.slideUp = new SlideUp.Builder(this.ll_feedback).withStartState(SlideUp.State.HIDDEN)
@@ -601,33 +617,40 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.OnGoing.name())) {
             this.txt_direction.setText("Show Direction to Destination");
             this.btn_start.setVisibility(View.GONE);
+            MyApp.setSharedPrefString("button","btn_start");
             this.btn_reached.setVisibility(View.VISIBLE);
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Finished.name())) {
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             startActivity(new Intent(getContext(), MainActivity.class));
+            MyApp.setSharedPrefString("button", "");
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Cancelled.name())) {
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             startActivity(new Intent(getContext(), MainActivity.class));
+            MyApp.setSharedPrefString("button", "");
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Reported.name())) {
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             startActivity(new Intent(getContext(), MainActivity.class));
+            MyApp.setSharedPrefString("button", "");
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Loading.name())) {
             this.btn_start.setVisibility(View.VISIBLE);
             this.btn_arrived.setVisibility(View.GONE);
+            MyApp.setSharedPrefString("button","btn_arrived");
             this.btn_stop.setVisibility(View.GONE);
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Unloading.name())) {
             this.btn_unloading_done.setVisibility(View.GONE);
             this.btn_loading_done.setVisibility(View.GONE);
             this.btn_arrived.setVisibility(View.GONE);
+            MyApp.setSharedPrefString("button","btn_unloading_done");
             this.btn_stop.setVisibility(View.VISIBLE);
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Reached.name())) {
             this.btn_unloading_done.setVisibility(View.VISIBLE);
             this.btn_loading_done.setVisibility(View.GONE);
             this.btn_arrived.setVisibility(View.GONE);
             this.btn_stop.setVisibility(View.GONE);
+            MyApp.setSharedPrefString("button","btn_arrived");
         }
     }
 
@@ -638,6 +661,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             startActivity(new Intent(getContext(), MainActivity.class));
+            MyApp.setSharedPrefString("button", "");
         }
     }
 
@@ -655,6 +679,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     public void onDestroy() {
         super.onDestroy();
         MyApp.setStatus(AppConstants.IS_OPEN, false);
+        locationHandler.removeCallbacks(locationCallback);
     }
 
     protected void onStop() {
@@ -671,8 +696,10 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         } else if (v.getId() == R.id.btn_arrived) {
             sendArrivalNotificationToUser();
             MyApp.setSharedPrefLong(AppConstants.TRIP_LOAD_START + this.currentTrip.getTrip_id(), System.currentTimeMillis());
+            MyApp.setSharedPrefString("button", "btn_arrived");
         } else if (v.getId() == R.id.btn_start) {
             changeTripStatus(TripStatus.OnGoing.name());
+            MyApp.setSharedPrefString("button", "btn_start");
         } else if (v.getId() == R.id.btn_stop) {
             RequestParams p = new RequestParams();
             p.put("trip_id", this.currentTrip.getTrip_id());
@@ -680,6 +707,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             p.put("user_id", this.currentTrip.getUser_id());
             p.put("trip_status", TripStatus.Finished.name());
             postCall(getContext(), AppConstants.BASE_URL_TRIP + "endtrip", p, "Please wait...", 11);
+            MyApp.setSharedPrefString("button", "btn_stop");
         } else if (v.getId() == R.id.btn_call_user) {
             Intent intent = new Intent("android.intent.action.DIAL");
             intent.setData(Uri.parse("tel:" + this.currentTrip.getUser().getU_mobile()));
@@ -697,19 +725,23 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             startActivity(mapIntent);
         } else if (v == this.btn_submit) {
             rateUserAndFinish();
+            MyApp.setSharedPrefString("button", "");
         } else if (v == this.btn_unloading_done) {
             MyApp.setSharedPrefLong(AppConstants.TRIP_UNLOAD_END + this.currentTrip.getTrip_id(), System.currentTimeMillis());
             this.btn_stop.setVisibility(View.VISIBLE);
             changeTripStatus(TripStatus.Unloading.name());
+            MyApp.setSharedPrefString("button", "btn_unloading_done");
         } else if (v == this.btn_loading_done) {
             MyApp.setSharedPrefLong(AppConstants.TRIP_LOAD_END + this.currentTrip.getTrip_id(), System.currentTimeMillis());
             this.btn_start.setVisibility(View.VISIBLE);
             changeTripStatus(TripStatus.Loading.name());
+            MyApp.setSharedPrefString("button", "btn_loading_done");
         } else if (v == this.btn_reached) {
             this.btn_reached.setVisibility(View.GONE);
             this.btn_unloading_done.setVisibility(View.VISIBLE);
             changeTripStatus(TripStatus.Reached.name());
             MyApp.setSharedPrefLong(AppConstants.TRIP_UNLOAD_START + this.currentTrip.getTrip_id(), System.currentTimeMillis());
+            MyApp.setSharedPrefString("button", "btn_reached");
         }
     }
 
@@ -732,7 +764,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
 
     private void calculateFinalFareStatusAndShowInvoice() {
         this.isCalculation = true;
-        String url = getMapsApiDirectionsUrl(this.sourceMarker.getPosition(), this.destMarker.getPosition());
+        String url = getMapsApiDirectionsUrl(this.sourceMarker.getPosition(), this.currentLocationMarker.getPosition());
         new ReadTask().execute(new String[]{url});
         MyApp.spinnerStart(getContext(), "Calculating Fair Details...");
     }
@@ -859,11 +891,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         this.mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             public void onCameraChange(CameraPosition cameraPosition) {
                 Log.d("Camera postion change", cameraPosition + "");
-                OnTripActivity.this.mCenterLatLong = cameraPosition.target;
+                mCenterLatLong = cameraPosition.target;
                 try {
                     Location mLocation = new Location("");
-                    mLocation.setLatitude(OnTripActivity.this.mCenterLatLong.latitude);
-                    mLocation.setLongitude(OnTripActivity.this.mCenterLatLong.longitude);
+                    mLocation.setLatitude(mCenterLatLong.latitude);
+                    mLocation.setLongitude(mCenterLatLong.longitude);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -883,6 +915,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         this.destMarker = this.mMap.addMarker(new MarkerOptions().position(new LatLng(destLat, destLng)).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_red)));
         this.destMarker.setSnippet(this.currentTrip.getTrip_from_loc());
         this.sourceMarker.setSnippet(this.currentTrip.getTrip_to_loc());
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -896,7 +929,9 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     this.currentLocationMarker.remove();
                     this.currentLocationMarker = null;
                 }
-                this.currentLocationMarker = this.mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_driver)));
+                this.currentLocationMarker = this.mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_driver)));
                 changeMap(location);
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 builder.include(this.sourceMarker.getPosition());
@@ -918,6 +953,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            locationHandler.postDelayed(locationCallback, 5000);
         }
     }
 
@@ -978,7 +1014,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 p.put("pay_mode", this.currentTrip.getTrip_pay_mode());
                 int payAmount = 0;
                 try {
-                    payAmount = Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) % 10));
+                    payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10));
                 } catch (Exception e) {
                 }
                 tripFare = payAmount + "";
@@ -1013,7 +1049,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             p.put("pay_mode", this.currentTrip.getTrip_pay_mode());
             int payAmount = 0;
             try {
-                payAmount = Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(OnTripActivity.this.currentTrip.getTrip_pay_amount()) % 10));
+                payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount()) + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10));
             } catch (Exception e) {
             }
             tripFare = payAmount + "";
@@ -1046,28 +1082,34 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             } else if (t.getTrip_status().equals(TripStatus.Cancelled.name())) {
                 MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
                 startActivity(new Intent(getContext(), MainActivity.class));
+                MyApp.setSharedPrefString("button", "");
                 finishAffinity();
             } else {
                 this.currentTrip = t;
                 MyApp.getApplication().writeTrip(t);
                 if (this.currentTrip.getTrip_status().equals(TripStatus.OnGoing.name())) {
                     this.btn_start.setVisibility(View.GONE);
+                    MyApp.setSharedPrefString("button", "btn_start");
                     this.btn_reached.setVisibility(View.VISIBLE);
                 } else if (this.currentTrip.getTrip_status().equals(TripStatus.Loading.name())) {
                     this.btn_start.setVisibility(View.VISIBLE);
                     this.btn_loading_done.setVisibility(View.GONE);
+                    MyApp.setSharedPrefString("button", "btn_loading_done");
                 } else if (this.currentTrip.getTrip_status().equals(TripStatus.Unloading.name())) {
                     this.btn_unloading_done.setVisibility(View.GONE);
+                    MyApp.setSharedPrefString("button", "btn_unloading_done");
                     this.btn_stop.setVisibility(View.VISIBLE);
                 } else if (this.currentTrip.getTrip_status().equals(TripStatus.Reached.name())) {
                     this.btn_unloading_done.setVisibility(View.VISIBLE);
                     this.btn_start.setVisibility(View.GONE);
+                    MyApp.setSharedPrefString("button", "btn_start");
                 }
                 if (this.currentTrip.getTrip_status().equals(TripStatus.Finished.name())) {
                     calculateFinalFareStatusAndShowInvoice();
                 }
             }
         } else if (o.optString("status").equals("OK") && callNumber == 7) {
+//            MyApp.setSharedPrefString("button", "invoice");
             try {
                 this.payment = new Gson().fromJson(o.getJSONObject("response").toString(), Payment.class);
                 if (this.payment != null) {
@@ -1094,6 +1136,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             startActivity(new Intent(getContext(), MainActivity.class));
+            MyApp.setSharedPrefString("button", "");
             finishAffinity();
         }
     }
@@ -1155,7 +1198,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     }
 
     public void onErrorReceived(String error) {
-        MyApp.showMassage(getContext(), error);
+//        MyApp.showMassage(getContext(), error);
     }
 
     private String getMapsApiDirectionsUrl(LatLng origin, LatLng dest) {
@@ -1187,6 +1230,61 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             }
         });
     }
+
+
+    private Runnable locationCallback = new Runnable() {
+        @Override
+        public void run() {
+
+            LocationManager locationManager = (LocationManager)
+                    getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+
+            if (ActivityCompat.checkSelfPermission(OnTripActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    OnTripActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            Location location = locationManager.getLastKnownLocation(locationManager
+                    .getBestProvider(criteria, false));
+            currentLocation = location;
+            {
+                try {
+                    if (currentLocationMarker != null) {
+                        currentLocationMarker.remove();
+                        currentLocationMarker = null;
+                    }
+                    currentLocationMarker = mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_driver)));
+                    changeMap(location);
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    builder.include(sourceMarker.getPosition());
+                    builder.include(destMarker.getPosition());
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds
+                            (adjustBoundsForMaxZoomLevel(builder.build()), 100));
+                    RequestParams pp = new RequestParams();
+                    pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
+                    pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+                    pp.put("d_lat", currentLocation.getLatitude() + "");
+                    pp.put("d_lng", currentLocation.getLongitude() + "");
+                    pp.put("d_degree", Float.valueOf(location.getBearing()));
+                    postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            locationHandler.postDelayed(locationCallback, 5000);
+
+        }
+    };
 
     public void rotateMarker(Marker marker, float toRotation, float st) {
         final Handler handler = new Handler();
