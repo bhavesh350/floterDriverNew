@@ -5,6 +5,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+
 import cargo.floter.driver.application.MyApp;
 import cargo.floter.driver.application.SingleInstance;
 import cargo.floter.driver.model.Trip;
@@ -13,7 +15,7 @@ public class HistoryDetailsActivity extends CustomActivity {
 
     private Toolbar toolbar;
     private TextView txt_date_time, txt_cost, txt_truck_type, payment_mode, address_src, address_dest, user_name,
-            trip_fare, discount, subtotal, total;
+            trip_fare, discount, subtotal, total, txt_gst, txt_platform_fee, txt_driver_amt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,9 @@ public class HistoryDetailsActivity extends CustomActivity {
         discount = (TextView) findViewById(R.id.discount);
         subtotal = (TextView) findViewById(R.id.subtotal);
         total = (TextView) findViewById(R.id.total);
+        txt_gst = (TextView) findViewById(R.id.txt_gst);
+        txt_platform_fee = (TextView) findViewById(R.id.txt_platform_fee);
+        txt_driver_amt = (TextView) findViewById(R.id.txt_driver_amt);
 
         Trip t = SingleInstance.getInstance().getHistoryTrip();
         try {
@@ -50,7 +55,7 @@ public class HistoryDetailsActivity extends CustomActivity {
             try {
                 txt_date_time.setText(MyApp.convertTime(t.getTrip_created()).replace(" ", " at "));
             } catch (Exception eo) {
-                MyApp.showMassage(HistoryDetailsActivity.this,getString(R.string.some_error_occurred));
+                MyApp.showMassage(HistoryDetailsActivity.this, getString(R.string.some_error_occurred));
                 finish();
                 return;
             }
@@ -61,7 +66,17 @@ public class HistoryDetailsActivity extends CustomActivity {
         address_src.setText(t.getTrip_from_loc());
         address_dest.setText(t.getTrip_to_loc());
         user_name.setText(t.getUser().getU_fname() + " " + t.getUser().getU_lname());
-        trip_fare.setText(t.getTrip_fare());
+        float tripFare = Integer.parseInt(t.getTrip_pay_amount());
+        float gst = tripFare * 0.05f;
+        BigDecimal gstB = MyApp.roundFloat(gst, 2);
+        tripFare = tripFare - gst;
+
+
+        txt_platform_fee.setText(MyApp.roundFloat((tripFare * 0.18f), 2) + "");
+        txt_driver_amt.setText(MyApp.roundFloat(tripFare - (tripFare * 0.18f), 2) + "");
+
+        trip_fare.setText(MyApp.roundFloat(tripFare, 2) + "");
+        txt_gst.setText(gstB + "");
         subtotal.setText(t.getTrip_pay_amount());
         total.setText(t.getTrip_pay_amount());
         discount.setText(t.getTrip_promo_amt());

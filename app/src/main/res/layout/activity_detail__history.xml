@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
@@ -23,6 +24,7 @@
             android:textSize="@dimen/dim_20"
             android:typeface="serif"></TextView>
     </android.support.v7.widget.Toolbar>
+
     <RelativeLayout
         android:id="@+id/input_fields"
         android:layout_width="fill_parent"
@@ -193,154 +195,238 @@
             android:textSize="@dimen/dim_18"
             android:textStyle="bold" />
 
-
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/label_reciept"
             android:background="@color/white"
-            android:orientation="vertical">
+            android:scrollbars="none">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dim_10"
-                android:layout_marginLeft="@dimen/dim_8"
-                android:layout_marginTop="@dimen/dim_10"
-                android:text="Floter Receipt"
-                android:textColor="@color/black"
-                android:textSize="@dimen/dim_20"
-                android:textStyle="bold" />
-
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dim_10">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dim_5"
-                    android:text="Trip Fare"
+                    android:layout_marginBottom="@dimen/dim_10"
+                    android:layout_marginLeft="@dimen/dim_8"
+                    android:layout_marginTop="@dimen/dim_10"
+                    android:text="Floter Receipt"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
+                    android:textSize="@dimen/dim_20"
+                    android:textStyle="bold" />
 
-                <TextView
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dim_10">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="Trip Fare"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+
+                    <TextView
                         android:id="@+id/trip_fare"
-                    android:layout_width="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="Rs. 91.97"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+                </RelativeLayout>
+
+
+                <!--<RelativeLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="@dimen/dim_5">-->
+
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="@dimen/dim_5"-->
+                <!--android:text="Platform Fee"-->
+                <!--android:textColor="@color/black"-->
+                <!--android:textSize="@dimen/dim_15" />-->
+
+                <!--<TextView-->
+                <!--android:id="@+id/txt_platform"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_marginRight="@dimen/dim_8"-->
+                <!--android:text="Rs.91.97"-->
+                <!--android:textColor="@color/black"-->
+                <!--android:textSize="@dimen/dim_15" />-->
+                <!--</RelativeLayout>-->
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/dim_8"
-                    android:text="Rs. 91.97"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
-            </RelativeLayout>
+                    android:layout_marginTop="@dimen/dim_10">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="Discounts"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
 
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="@dimen/dim_5">-->
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+                </RelativeLayout>
 
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="@dimen/dim_5"-->
-            <!--android:text="Platform Fee"-->
-            <!--android:textColor="@color/black"-->
-            <!--android:textSize="@dimen/dim_15" />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/txt_platform"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_marginRight="@dimen/dim_8"-->
-            <!--android:text="Rs.91.97"-->
-            <!--android:textColor="@color/black"-->
-            <!--android:textSize="@dimen/dim_15" />-->
-            <!--</RelativeLayout>-->
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dim_10">
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dim_5"
-                    android:text="Discounts"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
+                    android:layout_marginTop="@dimen/dim_10">
 
-                <TextView
-                    android:id="@+id/discount"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="GST (5%)"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+
+                    <TextView
+                        android:id="@+id/txt_gst"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/dim_8"
-                    android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
-            </RelativeLayout>
+                    android:layout_marginTop="@dimen/dim_10">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dim_10">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="Subtotal"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/subtotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="Rs.91.97"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginTop="@dimen/dim_10"
+                    android:background="@color/colorPrimaryDark"></View>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dim_5"
-                    android:text="Subtotal"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
+                    android:layout_marginBottom="@dimen/dim_5"
+                    android:layout_marginTop="@dimen/dim_10">
 
-                <TextView
-                    android:id="@+id/subtotal"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="Total"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+
+                    <TextView
+                        android:id="@+id/total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="Rs. 49"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginTop="@dimen/dim_10"
+                    android:background="@color/colorPrimaryDark"></View>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/dim_8"
-                    android:text="Rs.91.97"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
-            </RelativeLayout>
+                    android:layout_marginTop="@dimen/dim_10">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_marginTop="@dimen/dim_10"
-                android:background="@color/colorPrimaryDark"></View>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="Platform Fees (18%)"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dim_5"
-                android:layout_marginTop="@dimen/dim_10">
+                    <TextView
+                        android:id="@+id/txt_platform_fee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+                </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dim_5"
-                    android:text="Total"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
+                    android:paddingBottom="@dimen/dim_20"
+                    android:layout_marginTop="@dimen/dim_10">
 
-                <TextView
-                    android:id="@+id/total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/dim_8"
-                    android:text="Rs. 49"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dim_18" />
-            </RelativeLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dim_5"
+                        android:text="Driver Amount"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
 
-        </LinearLayout>
+                    <TextView
+                        android:id="@+id/txt_driver_amt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dim_8"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dim_18" />
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
         <!--</android.support.v7.widget.CardView>-->
     </RelativeLayout>
 

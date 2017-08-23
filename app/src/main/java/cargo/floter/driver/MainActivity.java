@@ -609,7 +609,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             if (location != null) {
                 getNearbyUsers(location.getLatitude() + "", location.getLongitude() + "");
                 changeMap(location);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1228,7 +1227,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
                     postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
 
-                    changeMap(location);
+//                    changeMap(location);
                     RequestParams pp = new RequestParams();
                     pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
                     pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
