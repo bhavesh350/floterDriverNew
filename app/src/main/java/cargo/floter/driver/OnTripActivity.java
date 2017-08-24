@@ -267,21 +267,10 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 p.put("pay_mode", currentTrip.getTrip_pay_mode());
                 int payAmount = 0;
                 try {
-                    if ((Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10) == 0) {
-                        payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
-                    } else {
-                        payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount())
-                                + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10));
-                    }
+                    payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
                 } catch (Exception e) {
                 }
-                tripFare = payAmount + "";
-                if ((Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10) == 0) {
-                    p.put("pay_amount", Integer.parseInt(currentTrip.getTrip_pay_amount()));
-                } else {
-                    p.put("pay_amount", Integer.parseInt(currentTrip.getTrip_pay_amount())
-                            + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10)));
-                }
+                p.put("pay_amount", Integer.parseInt(currentTrip.getTrip_pay_amount()));
 
                 p.put("pay_status", "PENDING");
                 p.put("promo_id", "");
@@ -321,10 +310,12 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     } catch (Exception e5) {
                     }
                 }
+                int tripFare = charge;
                 charge += (int) (((float) charge) * 0.05f);
 //                MyApp.showMassage(getContext(),"distance is: "+distance+" and fare is: "+charge);
                 p = new RequestParams();
                 p.put("trip_id", currentTrip.getTrip_id());
+                p.put("trip_fare", tripFare);
                 p.put("trip_pay_amount", charge);
                 p.put("trip_actual_drop_lat", Double.valueOf(currentLocation.getLatitude()));
                 p.put("trip_actual_drop_lng", Double.valueOf(currentLocation.getLongitude()));
@@ -1002,7 +993,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 
-    private String tripFare = "";
+//    private String tripFare = "";
 
     public void onJsonObjectResponseReceived(JSONObject o, int callNumber) {
         Trip t;
@@ -1010,7 +1001,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         if (o.optString("status").equals("OK") && callNumber == 3) {
             t = null;
             try {
-                t = (Trip) new Gson().fromJson(o.getJSONObject("response").toString(), Trip.class);
+                t = new Gson().fromJson(o.getJSONObject("response").toString(), Trip.class);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1025,22 +1016,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 p.put("pay_mode", this.currentTrip.getTrip_pay_mode());
                 int payAmount = 0;
                 try {
-                    if ((Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10) == 0) {
-                        payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
-                    } else {
-                        payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount())
-                                + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10));
-                    }
+                    payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
 
                 } catch (Exception e) {
                 }
-                tripFare = payAmount + "";
-                if ((Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10) == 0) {
-                    p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount()));
-                } else {
-                    p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount())
-                            + (10 - (Integer.parseInt(this.currentTrip.getTrip_pay_amount()) % 10)));
-                }
+                p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount()));
 
                 p.put("pay_status", "PENDING");
                 p.put("promo_id", "");
@@ -1072,22 +1052,12 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             p.put("pay_mode", this.currentTrip.getTrip_pay_mode());
             int payAmount = 0;
             try {
-                if ((Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10) == 0) {
-                    payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
-                } else {
-                    payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount())
-                            + (10 - (Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10));
-                }
+                payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
 
             } catch (Exception e) {
             }
-            tripFare = payAmount + "";
-            if ((Integer.parseInt(currentTrip.getTrip_pay_amount()) % 10) == 0) {
-                p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount()));
-            }else{
-                p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount())
-                        + (10 - (Integer.parseInt(this.currentTrip.getTrip_pay_amount()) % 10)));
-            }
+//            tripFare = payAmount + "";
+            p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount()));
 
             p.put("pay_status", "PENDING");
             p.put("promo_id", "");
@@ -1151,13 +1121,12 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     this.btn_stop.setVisibility(View.GONE);
                     this.btn_arrived.setVisibility(View.GONE);
                     this.btn_start.setVisibility(View.GONE);
-                    p = new RequestParams();
-                    p.put("trip_id", this.currentTrip.getTrip_id());
-                    p.put("trip_fare", tripFare);
-                    p.put("trip_pay_amount", this.payment.getPay_amount());
-                    p.put("trip_promo_amt", payment.getPay_promo_amt());
-
-                    postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "", 26);
+//                    p = new RequestParams();
+//                    p.put("trip_id", this.currentTrip.getTrip_id());
+//                    p.put("trip_fare", tripFare);
+//                    p.put("trip_pay_amount", this.payment.getPay_amount());
+//                    p.put("trip_promo_amt", payment.getPay_promo_amt());
+//                    postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "", 26);
                     openPaymentWithFeedback();
                     return;
                 }
@@ -1198,9 +1167,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d("Response:", response.toString());
+                MyApp.spinnerStop();
             }
 
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                MyApp.spinnerStop();
             }
         });
     }

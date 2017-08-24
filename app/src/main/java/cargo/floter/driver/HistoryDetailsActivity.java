@@ -61,22 +61,21 @@ public class HistoryDetailsActivity extends CustomActivity {
             }
         }
         txt_cost.setText("Rs. " + t.getTrip_pay_amount());
+        trip_fare.setText("Rs. " + t.getTrip_fare());
         txt_truck_type.setText(t.getDriver().getCar_name());
         payment_mode.setText(t.getTrip_pay_mode());
         address_src.setText(t.getTrip_from_loc());
         address_dest.setText(t.getTrip_to_loc());
         user_name.setText(t.getUser().getU_fname() + " " + t.getUser().getU_lname());
         float tripFare = Integer.parseInt(t.getTrip_pay_amount());
-        float gst = tripFare * 0.05f;
-        BigDecimal gstB = MyApp.roundFloat(gst, 2);
+        int gst = (int)(tripFare * 0.05f);
+//        BigDecimal gstB = MyApp.roundFloat(gst, 2);
         tripFare = tripFare - gst;
-
 
         txt_platform_fee.setText(MyApp.roundFloat((tripFare * 0.18f), 2) + "");
         txt_driver_amt.setText(MyApp.roundFloat(tripFare - (tripFare * 0.18f), 2) + "");
 
-        trip_fare.setText(MyApp.roundFloat(tripFare, 2) + "");
-        txt_gst.setText(gstB + "");
+        txt_gst.setText(gst + "");
         subtotal.setText(t.getTrip_pay_amount());
         total.setText(t.getTrip_pay_amount());
         discount.setText(t.getTrip_promo_amt());
