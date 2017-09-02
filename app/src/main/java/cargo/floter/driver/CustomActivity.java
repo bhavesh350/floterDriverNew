@@ -23,6 +23,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cargo.floter.driver.application.MyApp;
 import cz.msebera.android.httpclient.Header;
 
 
@@ -214,7 +215,7 @@ public class CustomActivity extends AppCompatActivity implements
 
     public void postCall(Context c, String url, RequestParams p, String loadingMsg, final int callNumber) {
         if (!TextUtils.isEmpty(loadingMsg))
-            cargo.floter.driver.application.MyApp.spinnerStart(c, loadingMsg);
+            MyApp.spinnerStart(c, loadingMsg);
 
         Log.d("URl:", url);
         Log.d("Request:", p.toString());
@@ -224,7 +225,7 @@ public class CustomActivity extends AppCompatActivity implements
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
-                cargo.floter.driver.application.MyApp.spinnerStop();
+                MyApp.spinnerStop();
                 Log.d("Response:", response.toString());
                 try {
                     responseCallback.onJsonObjectResponseReceived(response, callNumber);
@@ -236,7 +237,7 @@ public class CustomActivity extends AppCompatActivity implements
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
-                cargo.floter.driver.application.MyApp.spinnerStop();
+                MyApp.spinnerStop();
                 if (statusCode == 0) {
                     responseCallback.onErrorReceived(getString(R.string.timeout));
                 } else {
@@ -246,7 +247,7 @@ public class CustomActivity extends AppCompatActivity implements
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                cargo.floter.driver.application.MyApp.spinnerStop();
+                MyApp.spinnerStop();
                 if (statusCode == 0) {
                     responseCallback.onErrorReceived(getString(R.string.timeout));
                 } else {

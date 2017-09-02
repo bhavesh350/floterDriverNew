@@ -13,6 +13,16 @@ public class RateCard implements Serializable {
     public class RateCardResponse implements Serializable {
         private static final long serialVersionUID = 752647229536227847L;
         private String base_fare;
+        private String car_id;
+
+        public String getCar_id() {
+            return car_id;
+        }
+
+        public void setCar_id(String car_id) {
+            this.car_id = car_id;
+        }
+
         private String capacity;
         private String car_name;
         private String charge_after_free_time;

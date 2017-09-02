@@ -18,7 +18,7 @@ public class AppConstants {
     public static String IS_OPEN = "is_open";
     public static String ON_JOB = "onJOB";
     public static String SEND_OTP = "sendotp?";
-    public static final float SERVICE_TAX = 0.0f;
+    public static final float SERVICE_TAX = 0.05f;
     public static String TRIP_LOAD_END = "TripLoadingEnd";
     public static String TRIP_LOAD_START = "TripLoadingStart";
     public static String TRIP_UNLOAD_END = "TripUnLoadingEnd";

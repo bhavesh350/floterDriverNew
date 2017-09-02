@@ -58,6 +58,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -112,6 +113,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             if (TextUtils.isEmpty(MyApp.getSharedPrefString(AppConstants.CURRENT_TRIP_ID))) {
                 MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             } else {
+                SingleInstance.getInstance().setJsonTripPayload(null);
                 startActivity(new Intent(getContext(), OnTripActivity.class));
                 finish();
                 return;
@@ -150,13 +152,15 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         drawerFragment.setDrawerListener(this);
         saveRateCard();
         onNewIntent(getIntent());
+
+        handler.postDelayed(newTripCallback, 2000);
     }
 
     public void onNewIntent(Intent intent) {
         Bundle extras = intent.getExtras();
-        if (extras != null && extras.containsKey("TYPE") && !this.isTimerDialogShown) {
+        if (extras != null && extras.containsKey("TYPE") && !isTimerDialogShown) {
             if (intent.getStringExtra("TYPE").equals("NEW_TRIP")) {
-                this.isTimerDialogShown = true;
+                isTimerDialogShown = true;
                 JSONObject o = SingleInstance.getInstance().getJsonTripPayload();
                 if (o == null) {
                     return;
@@ -194,29 +198,29 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
                 dialog.setCancelable(false);
-                this.progress = 1;
+                progress = 1;
                 final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.new_booking);
                 mp.start();
                 mp.setLooping(true);
                 final CountDownTimer countDownTimer = new CountDownTimer((long) 30000, 1000) {
                     public void onTick(long millisUntilFinished) {
-                        countDownView.setProgress(MainActivity.this.progress, 30);
-                        MainActivity.this.progress = MainActivity.this.progress + 1;
+                        countDownView.setProgress(progress, 30);
+                        progress = progress + 1;
                     }
 
                     public void onFinish() {
-                        countDownView.setProgress(MainActivity.this.progress, 30);
+                        countDownView.setProgress(progress, 30);
                         dialog.dismiss();
                         mp.stop();
                         dialog.dismiss();
-                        MainActivity.this.isTimerDialogShown = false;
+                        isTimerDialogShown = false;
                     }
                 };
                 countDownTimer.start();
                 decline.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
 
-                        Toast.makeText(MainActivity.this, "Ride Declined", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Ride Declined", Toast.LENGTH_SHORT).show();
                         countDownTimer.cancel();
                         mp.stop();
                         mp.release();
@@ -226,7 +230,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 });
                 accept.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
-                        Toast.makeText(MainActivity.this, "Ride Accepted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Ride Accepted", Toast.LENGTH_SHORT).show();
                         countDownTimer.cancel();
                         mp.stop();
                         mp.release();
@@ -260,6 +264,26 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         }
     }
 
+
+    private Handler handler = new Handler();
+    private Runnable newTripCallback = new Runnable() {
+        @Override
+        public void run() {
+            if (!MyApp.getStatus(AppConstants.IS_OPEN)) {
+                if (MyApp.getStatus("ALLOW_TRIP")) {
+                    Bundle extras = getIntent().getExtras();
+                    if (extras != null && extras.containsKey("TYPE")) {
+                        MyApp.setStatus("ALLOW_TRIP", false);
+                        Intent i = new Intent();
+                        i.putExtra("TYPE", "NEW_TRIP");
+                        onNewIntent(i);
+                    }
+                }
+                handler.postDelayed(newTripCallback, 2000);
+            }
+        }
+    };
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -285,14 +309,16 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         locationProvider.connect();
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(this.receiver, this.filter);
+        registerReceiver(receiver, filter);
         if (MyApp.getStatus(AppConstants.IS_ON_TRIP)) {
             if (TextUtils.isEmpty(MyApp.getSharedPrefString(AppConstants.CURRENT_TRIP_ID))) {
                 MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             } else {
+                SingleInstance.getInstance().setJsonTripPayload(null);
                 startActivity(new Intent(getContext(), OnTripActivity.class));
                 finish();
                 return;
@@ -321,6 +347,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         super.onDestroy();
         MyApp.setStatus(AppConstants.IS_OPEN, false);
         try {
+            handler.removeCallbacks(newTripCallback);
             locationHandler.removeCallbacks(locationUpdateCallback);
         } catch (Exception e) {
         }
@@ -342,10 +369,10 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             String value = intent.getStringExtra("TYPE");
             if (value.equals("NEW_TRIP") && !isTimerDialogShown) {
                 try {
-                    MainActivity.this.isTimerDialogShown = true;
+                    isTimerDialogShown = true;
                     JSONObject o = new JSONObject(SingleInstance.getInstance().getJsonTripPayload().toString());
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    View mView = MainActivity.this.getLayoutInflater().inflate(R.layout.activit_dialog, null);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    View mView = getLayoutInflater().inflate(R.layout.activit_dialog, null);
                     Button decline = (Button) mView.findViewById(R.id.ride_decline);
                     Button accept = (Button) mView.findViewById(R.id.ride_accept);
                     TextView txt_user_name = (TextView) mView.findViewById(R.id.txt_user_name);
@@ -370,43 +397,43 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     builder.setView(mView);
                     final AlertDialog dialog = builder.create();
                     dialog.setCancelable(false);
-                    MainActivity.this.progress = 1;
-                    final MediaPlayer mp = MediaPlayer.create(MainActivity.this.getContext(), R.raw.new_booking);
+                    progress = 1;
+                    final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.new_booking);
                     mp.start();
                     mp.setLooping(true);
                     final CountDownTimer countDownTimer = new CountDownTimer((long) 30000, 1000) {
                         public void onTick(long millisUntilFinished) {
-                            countDownView.setProgress(MainActivity.this.progress, 30);
-                            MainActivity.this.progress = MainActivity.this.progress + 1;
+                            countDownView.setProgress(progress, 30);
+                            progress = progress + 1;
                         }
 
                         public void onFinish() {
-                            countDownView.setProgress(MainActivity.this.progress, 30);
+                            countDownView.setProgress(progress, 30);
                             dialog.dismiss();
                             mp.stop();
                             dialog.dismiss();
-                            MainActivity.this.isTimerDialogShown = false;
+                            isTimerDialogShown = false;
                         }
                     };
                     countDownTimer.start();
                     decline.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View view) {
-                            Toast.makeText(MainActivity.this, "Ride Declined", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Ride Declined", Toast.LENGTH_SHORT).show();
                             countDownTimer.cancel();
                             mp.stop();
                             mp.release();
                             dialog.dismiss();
-                            MainActivity.this.callAcceptDeclineApi(false, SingleInstance.getInstance().getJsonTripPayload().toString());
+                            callAcceptDeclineApi(false, SingleInstance.getInstance().getJsonTripPayload().toString());
                         }
                     });
                     accept.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View view) {
-                            Toast.makeText(MainActivity.this, "Ride Accepted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Ride Accepted", Toast.LENGTH_SHORT).show();
                             countDownTimer.cancel();
                             mp.stop();
                             mp.release();
                             dialog.dismiss();
-                            MainActivity.this.callAcceptDeclineApi(true, SingleInstance.getInstance().getJsonTripPayload().toString());
+                            callAcceptDeclineApi(true, SingleInstance.getInstance().getJsonTripPayload().toString());
                         }
                     });
                     dialog.show();
@@ -470,9 +497,43 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
     @Override
     public void onDrawerItemSelected(View view, int position) {
         if (position == 6) {
-            MyApp.setStatus(AppConstants.IS_LOGIN, false);
-            startActivity(new Intent(this, LoginActivity.class));
-            finishAffinity();
+
+            RequestParams pp = new RequestParams();
+            Driver u = MyApp.getApplication().readDriver();
+            pp.put("driver_id", u.getDriver_id());
+            pp.put("d_is_available", 0);
+            pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+            pp.put("d_lat", "0.0");
+            pp.put("d_lng", "0.0");
+            postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 213);
+            MyApp.setStatus(AppConstants.ON_JOB, false);
+
+            MyApp.spinnerStart(getContext(), "Logging you out...");
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    try {
+
+                        FirebaseInstanceId.getInstance().deleteInstanceId();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void result) {
+                    MyApp.spinnerStop();
+                    String token = FirebaseInstanceId.getInstance().getToken();
+                    Log.d("deviceToken", "deviceToken\n" + token);
+                    MyApp.setStatus(AppConstants.IS_LOGIN, false);
+                    startActivity(new Intent(getContext(), LoginActivity.class));
+                    finishAffinity();
+                }
+            }.execute();
+
+
         } else if (position == 3) {
             startActivity(new Intent(getContext(), ProfileActivity.class));
         } else if (position == 1) {
@@ -522,7 +583,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     switch (status.getStatusCode()) {
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                             try {
-                                status.startResolutionForResult(MainActivity.this,
+                                status.startResolutionForResult(getParent(),
                                         44);
                             } catch (IntentSender.SendIntentException e) {
                                 e.printStackTrace();
@@ -651,7 +712,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
     }
 
     private Context getContext() {
-        return MainActivity.this;
+        return this;
     }
 
     @Override
@@ -847,7 +908,8 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                             pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
                             pp.put("d_is_available", 0);
                             pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-                            MainActivity.this.postCall(MainActivity.this.getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 13);
+                            SingleInstance.getInstance().setJsonTripPayload(null);
+                            postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 13);
                         }
 
                         @Override
@@ -856,12 +918,13 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                                 MyApp.popMessage("Error!", "Timeout error, wait for other ride.", getContext());
                             } else {
                                 MyApp.setStatus(AppConstants.IS_ON_TRIP, true);
+                                SingleInstance.getInstance().setJsonTripPayload(null);
                                 startActivity(new Intent(getContext(), OnTripActivity.class));
                                 RequestParams pp = new RequestParams();
                                 pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
                                 pp.put("d_is_available", 0);
                                 pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-                                MainActivity.this.postCall(MainActivity.this.getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 13);
+                                postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 13);
                             }
                         }
                     });
@@ -875,8 +938,8 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
     private LatLngBounds adjustBoundsForMaxZoomLevel(LatLngBounds bounds) {
         LatLng sw = bounds.southwest;
         LatLng ne = bounds.northeast;
-        double deltaLat = Math.abs((sw.latitude - this.currentLocation.getLatitude()) - (ne.latitude - this.currentLocation.getLatitude()));
-        double deltaLon = Math.abs((sw.longitude - this.currentLocation.getLongitude()) - (ne.longitude - this.currentLocation.getLongitude()));
+        double deltaLat = Math.abs((sw.latitude - currentLocation.getLatitude()) - (ne.latitude - currentLocation.getLatitude()));
+        double deltaLon = Math.abs((sw.longitude - currentLocation.getLongitude()) - (ne.longitude - currentLocation.getLongitude()));
         LatLng latLng;
         LatLng ne2;
         LatLngBounds latLngBounds;
@@ -894,11 +957,11 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             sw = latLng;
         }
         LatLngBounds.Builder displayBuilder = new LatLngBounds.Builder();
-        displayBuilder.include(new LatLng(this.currentLocation.getLatitude(), this.currentLocation.getLongitude()));
-        displayBuilder.include(new LatLng(this.currentLocation.getLatitude() + deltaLat, this.currentLocation.getLongitude() + deltaLon));
-        displayBuilder.include(new LatLng(this.currentLocation.getLatitude() - deltaLat, this.currentLocation.getLongitude() - deltaLon));
-        this.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(displayBuilder.build(), 100));
-        this.mMap.setMaxZoomPreference(15.5f);
+        displayBuilder.include(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+        displayBuilder.include(new LatLng(currentLocation.getLatitude() + deltaLat, currentLocation.getLongitude() + deltaLon));
+        displayBuilder.include(new LatLng(currentLocation.getLatitude() - deltaLat, currentLocation.getLongitude() - deltaLon));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(displayBuilder.build(), 100));
+        mMap.setMaxZoomPreference(15.5f);
         return bounds;
     }
 
@@ -1200,44 +1263,51 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             }
         });
     }
-
+    LocationManager mLocationManager;
+    private Location getLastKnownLocation() {
+        mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                return null;
+            }
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
 
     private Runnable locationUpdateCallback = new Runnable() {
         @Override
         public void run() {
-
-            LocationManager locationManager = (LocationManager)
-                    getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-
-            if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                return;
+            Location location = getLastKnownLocation();
+            if (location != null) {
+                currentLocation = location;
             }
-            Location location = locationManager.getLastKnownLocation(locationManager
-                    .getBestProvider(criteria, false));
-            currentLocation = location;
-            {
-                try {
-                    RequestParams p = new RequestParams();
-                    p.put("lat", currentLocation.getLatitude());
-                    p.put("lng", currentLocation.getLongitude());
-                    p.put("miles", 12);
-                    p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-                    postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
-
-//                    changeMap(location);
-                    RequestParams pp = new RequestParams();
-                    pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
-                    pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-                    pp.put("d_lat", currentLocation.getLatitude() + "");
-                    pp.put("d_lng", currentLocation.getLongitude() + "");
-                    pp.put("d_degree", Float.valueOf(location.getBearing()));
-                    postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                RequestParams p = new RequestParams();
+                p.put("lat", currentLocation.getLatitude());
+                p.put("lng", currentLocation.getLongitude());
+                p.put("miles", 12);
+                p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+                postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
+                RequestParams pp = new RequestParams();
+                pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
+                pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+                pp.put("d_lat", currentLocation.getLatitude() + "");
+                pp.put("d_lng", currentLocation.getLongitude() + "");
+                pp.put("d_degree", Float.valueOf(currentLocation.getBearing()));
+                postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             locationHandler.postDelayed(locationUpdateCallback, 5000);

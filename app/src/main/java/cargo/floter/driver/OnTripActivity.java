@@ -131,6 +131,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     private TextView txt_trip_payment;
     private TextView txt_user_name;
     private Handler locationHandler = new Handler();
+    private boolean isInvoiceGenerated = false;
 
     class C02292 implements RatingBar.OnRatingBarChangeListener {
         C02292() {
@@ -244,9 +245,9 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             }
             RateCard.RateCardResponse r = null;
             try {
-                String carname = MyApp.getApplication().readDriver().getCar_name();
+                String carId = MyApp.getApplication().readDriver().getCar_id();
                 for (RateCard.RateCardResponse rr : MyApp.getApplication().readRateCard().getResponse()) {
-                    if (rr.getCar_name().equals(carname)) {
+                    if (rr.getCar_id().equals(carId)) {
                         r = rr;
                     }
                 }
@@ -256,39 +257,39 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             RequestParams p;
             if (r == null) {
 //                MyApp.showMassage(getContext(),"Rate card is null and fare calculated as old");
-//                if (isCalculation) {
-                p = new RequestParams();
-                p.put("trip_id", currentTrip.getTrip_id());
-                p.put("driver_id", currentTrip.getDriver_id());
-                p.put("user_id", currentTrip.getUser_id());
-                p.put("u_fname", currentTrip.getUser().getU_fname() + " " + currentTrip.getUser().getU_lname());
-                p.put("d_fname", currentTrip.getDriver().getD_name());
-                p.put("pay_date", currentTrip.getTrip_modified().split(" ")[0]);
-                p.put("pay_mode", currentTrip.getTrip_pay_mode());
-                int payAmount = 0;
-                try {
-                    payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
-                } catch (Exception e) {
-                }
-                p.put("pay_amount", Integer.parseInt(currentTrip.getTrip_pay_amount()));
-
-                p.put("pay_status", "PENDING");
-                p.put("promo_id", "");
-                p.put("order_id", "ORDER_" + currentTrip.getTrip_id());
-                p.put("transaction_id", "00000" + currentTrip.getTrip_id());
-                p.put("pay_promo_code", currentTrip.getTrip_promo_code());
-                if (currentTrip.getTrip_promo_code().equals("FIRST50")) {
-                    p.put("pay_promo_amt", "50");
-                    payAmount = payAmount - 50;
+                if (isCalculation) {
+                    p = new RequestParams();
+                    p.put("trip_id", currentTrip.getTrip_id());
+                    p.put("driver_id", currentTrip.getDriver_id());
+                    p.put("user_id", currentTrip.getUser_id());
+                    p.put("u_fname", currentTrip.getUser().getU_fname() + " " + currentTrip.getUser().getU_lname());
+                    p.put("d_fname", currentTrip.getDriver().getD_name());
+                    p.put("pay_date", currentTrip.getTrip_modified().split(" ")[0]);
+                    p.put("pay_mode", currentTrip.getTrip_pay_mode());
+                    int payAmount = 0;
+                    try {
+                        payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
+                    } catch (Exception e) {
+                    }
                     p.put("pay_amount", payAmount);
-                } else if (currentTrip.getTrip_promo_code().equals("FLOTER05")) {
-                    p.put("pay_promo_amt", (payAmount - (int) (payAmount * 0.05)) + "");
-                    payAmount = payAmount - (int) (payAmount * 0.05);
-                    p.put("pay_amount", payAmount);
-                }
+//                p.put("trip_fare", payAmount);
+                    p.put("pay_status", "PENDING");
+                    p.put("promo_id", "");
+                    p.put("order_id", "ORDER_" + currentTrip.getTrip_id());
+                    p.put("transaction_id", "00000" + currentTrip.getTrip_id());
+                    p.put("pay_promo_code", currentTrip.getTrip_promo_code());
+                    if (currentTrip.getTrip_promo_code().equals("FIRST50")) {
+                        p.put("pay_promo_amt", "50");
+                        payAmount = payAmount - 50;
+                        p.put("pay_amount", payAmount);
+                    } else if (currentTrip.getTrip_promo_code().equals("FLOTER05")) {
+                        p.put("pay_promo_amt", (payAmount - (int) (payAmount * 0.05)) + "");
+                        payAmount = payAmount - (int) (payAmount * 0.05);
+                        p.put("pay_amount", payAmount);
+                    }
 
-                postCall(getContext(), AppConstants.BASE_PAYMENT + "save?", p, "Creating invoice...", 7);
-//                }
+                    postCall(getContext(), AppConstants.BASE_PAYMENT + "save?", p, "Creating invoice...", 7);
+                }
             } else if (isCalculation) {
                 int charge = Integer.parseInt(r.getBase_fare());
 
@@ -520,6 +521,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             MyApp.setSharedPrefString("button", "btn_arrived");
         }
 
+        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+            super.onFailure(statusCode, headers, throwable, errorResponse);
+            MyApp.spinnerStop();
+        }
+
         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
             MyApp.spinnerStop();
             MyApp.setSharedPrefString("button", "");
@@ -549,7 +555,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        actionBar.setTitle((CharSequence) "");
+        actionBar.setTitle("");
         setResponseListener(this);
         this.drawerFragment = (FragmentDrawer) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         this.drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), this.mToolbar);
@@ -622,10 +628,18 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             MyApp.setSharedPrefString("button", "btn_start");
             this.btn_reached.setVisibility(View.VISIBLE);
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Finished.name())) {
-            MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
-            MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
-            startActivity(new Intent(getContext(), MainActivity.class));
-            MyApp.setSharedPrefString("button", "");
+            if (isInvoiceGenerated) {
+                MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
+                MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
+                startActivity(new Intent(getContext(), MainActivity.class));
+                MyApp.setSharedPrefString("button", "");
+            } else {
+                this.btn_unloading_done.setVisibility(View.GONE);
+                this.btn_loading_done.setVisibility(View.GONE);
+                this.btn_arrived.setVisibility(View.GONE);
+                MyApp.setSharedPrefString("button", "btn_unloading_done");
+                this.btn_stop.setVisibility(View.VISIBLE);
+            }
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Cancelled.name())) {
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
@@ -707,7 +721,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             p.put("trip_id", this.currentTrip.getTrip_id());
             p.put("driver_id", this.currentTrip.getDriver_id());
             p.put("user_id", this.currentTrip.getUser_id());
-            p.put("trip_status", TripStatus.Finished.name());
+//            p.put("trip_status", TripStatus.Finished.name());
             postCall(getContext(), AppConstants.BASE_URL_TRIP + "endtrip", p, "Please wait...", 11);
             MyApp.setSharedPrefString("button", "btn_stop");
         } else if (v.getId() == R.id.btn_call_user) {
@@ -757,7 +771,6 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         p.put("trip_feedback", selectedText);
         p.put("trip_rating", this.rating_bar.getRating() + "");
         postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "Please wait...", 22);
-
     }
 
     private int loadingUnloadingTime() {
@@ -818,6 +831,12 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         AsyncHttpClient client = new AsyncHttpClient();
         client.setTimeout(30000);
         client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07537());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MyApp.spinnerStop();
+            }
+        }, 30000);
     }
 
     public static void cancelNotification(Context ctx, int notifyId) {
@@ -924,9 +943,10 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     }
 
     public void handleNewLocation(Location location) {
-        this.currentLocation = location;
+
         if (location != null) {
             try {
+                this.currentLocation = location;
                 if (this.currentLocationMarker != null) {
                     this.currentLocationMarker.remove();
                     this.currentLocationMarker = null;
@@ -1017,10 +1037,9 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 int payAmount = 0;
                 try {
                     payAmount = Integer.parseInt(currentTrip.getTrip_pay_amount());
-
                 } catch (Exception e) {
                 }
-                p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount()));
+                p.put("pay_amount", payAmount);
 
                 p.put("pay_status", "PENDING");
                 p.put("promo_id", "");
@@ -1057,8 +1076,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             } catch (Exception e) {
             }
 //            tripFare = payAmount + "";
-            p.put("pay_amount", Integer.parseInt(this.currentTrip.getTrip_pay_amount()));
-
+            p.put("pay_amount", payAmount);
             p.put("pay_status", "PENDING");
             p.put("promo_id", "");
             p.put("order_id", "ORDER_" + this.currentTrip.getTrip_id());
@@ -1128,6 +1146,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
 //                    p.put("trip_promo_amt", payment.getPay_promo_amt());
 //                    postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "", 26);
                     openPaymentWithFeedback();
+                    isInvoiceGenerated = true;
                     return;
                 }
                 MyApp.showMassage(getContext(), "Parsing error, please try again.");
@@ -1237,33 +1256,48 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         });
     }
 
+    private Location getLastKnownLocation() {
+        mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                return null;
+            }
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
 
+    LocationManager mLocationManager;
     private Runnable locationCallback = new Runnable() {
         @Override
         public void run() {
 
-            LocationManager locationManager = (LocationManager)
-                    getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
 
-            if (ActivityCompat.checkSelfPermission(OnTripActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    OnTripActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                return;
-            }
-            Location location = locationManager.getLastKnownLocation(locationManager
-                    .getBestProvider(criteria, false));
-            currentLocation = location;
-            {
-                try {
+            Location myLocation = getLastKnownLocation();
+
+//            Location location = locationManager.getLastKnownLocation(locationManager
+//                    .getBestProvider(criteria, false));
+            try {
+                if (myLocation != null) {
+                    currentLocation = myLocation;
                     if (currentLocationMarker != null) {
                         currentLocationMarker.remove();
                         currentLocationMarker = null;
                     }
                     currentLocationMarker = mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                            .position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_driver)));
-                    changeMap(location);
+                    changeMap(myLocation);
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                     builder.include(sourceMarker.getPosition());
                     builder.include(destMarker.getPosition());
@@ -1274,11 +1308,12 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
                     pp.put("d_lat", currentLocation.getLatitude() + "");
                     pp.put("d_lng", currentLocation.getLongitude() + "");
-                    pp.put("d_degree", Float.valueOf(location.getBearing()));
+                    pp.put("d_degree", Float.valueOf(myLocation.getBearing()));
                     postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             locationHandler.postDelayed(locationCallback, 5000);

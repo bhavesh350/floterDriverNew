@@ -624,6 +624,7 @@ public class MyApp extends Application {
                 user = (Driver) in.readObject();
                 in.close();
                 fileIn.close();
+                return user;
             } catch (StreamCorruptedException e) {
                 e.printStackTrace();
             } catch (OptionalDataException e) {
