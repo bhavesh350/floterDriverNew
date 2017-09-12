@@ -223,11 +223,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 for (int j = 0; j < path.size(); j++) {
                     HashMap<String, String> point = (HashMap) path.get(j);
                     if (j == 0) {
-                        distance = (String) point.get("distance");
+                        distance = point.get("distance");
                     } else if (j == 1) {
-                        duration = (String) point.get("duration");
+                        duration = point.get("duration");
                     } else {
-                        points.add(new LatLng(Double.parseDouble((String) point.get("lat")), Double.parseDouble((String) point.get("lng"))));
+                        points.add(new LatLng(Double.parseDouble(point.get("lat")), Double.parseDouble(point.get("lng"))));
                     }
                 }
                 polyLineOptions.addAll(points);
@@ -292,7 +292,10 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 }
             } else if (isCalculation) {
                 int charge = Integer.parseInt(r.getBase_fare());
-
+                if (f == 0) {
+                    f = (float) MyApp.distance(sourceMarker.getPosition().latitude, sourceMarker.getPosition().longitude
+                            , currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude);
+                }
                 if (f > 2.0f) {
                     try {
                         charge = (int) (((float) charge) + ((f - 2.0f) * ((float) Integer.parseInt(r.getPrice_per_km()))));
@@ -317,6 +320,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 p = new RequestParams();
                 p.put("trip_id", currentTrip.getTrip_id());
                 p.put("trip_fare", tripFare);
+                p.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
                 p.put("trip_pay_amount", charge);
                 p.put("trip_actual_drop_lat", Double.valueOf(currentLocation.getLatitude()));
                 p.put("trip_actual_drop_lng", Double.valueOf(currentLocation.getLongitude()));
@@ -350,7 +354,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                         JSONArray jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
                         for (int k = 0; k < jSteps.length(); k++) {
                             String polyline = "";
-                            List<LatLng> list = decodePoly((String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points"));
+                            List<LatLng> list = decodePoly((String)((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points"));
                             for (int l = 0; l < list.size(); l++) {
                                 HashMap<String, String> hm = new HashMap();
                                 hm.put("lat", Double.toString(((LatLng) list.get(l)).latitude));
@@ -769,6 +773,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         p.put("trip_id", MyApp.getSharedPrefString(AppConstants.CURRENT_TRIP_ID));
         p.put("trip_status", TripStatus.Finished.name());
         p.put("trip_feedback", selectedText);
+        p.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
         p.put("trip_rating", this.rating_bar.getRating() + "");
         postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "Please wait...", 22);
     }
@@ -777,10 +782,14 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         return (int) TimeUnit.MILLISECONDS.toMinutes((MyApp.getSharedPrefLong(AppConstants.TRIP_LOAD_END) - MyApp.getSharedPrefLong(AppConstants.TRIP_LOAD_START)) + (MyApp.getSharedPrefLong(AppConstants.TRIP_UNLOAD_END) - MyApp.getSharedPrefLong(AppConstants.TRIP_UNLOAD_START)));
     }
 
+
     private void calculateFinalFareStatusAndShowInvoice() {
+        locationProvider = new LocationProvider(this, this, this);
+        locationProvider.connect();
+        isOnceMarkerSet = false;
         this.isCalculation = true;
-        String url = getMapsApiDirectionsUrl(this.sourceMarker.getPosition(), this.currentLocationMarker.getPosition());
-        new ReadTask().execute(new String[]{url});
+//        String url = getMapsApiDirectionsUrl(this.sourceMarker.getPosition(), this.currentLocationMarker.getPosition());
+//        new ReadTask().execute(new String[]{url});
         MyApp.spinnerStart(getContext(), "Calculating Fair Details...");
     }
 
@@ -788,6 +797,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         RequestParams p = new RequestParams();
         p.put("trip_id", this.currentTrip.getTrip_id());
         p.put("trip_status", trip_status);
+        p.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
         postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "Please wait...", 5);
         RequestParams pp;
         AsyncHttpClient client;
@@ -943,7 +953,6 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     }
 
     public void handleNewLocation(Location location) {
-
         if (location != null) {
             try {
                 this.currentLocation = location;
@@ -960,10 +969,18 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 builder.include(this.destMarker.getPosition());
                 this.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(adjustBoundsForMaxZoomLevel(builder.build()), 100));
                 if (!this.isOnceMarkerSet) {
-                    this.isOnceMarkerSet = true;
-                    String url = getMapsApiDirectionsUrl(this.sourceMarker.getPosition(), this.destMarker.getPosition());
-                    OnTripActivity onTripActivity = this;
-                    new ReadTask().execute(new String[]{url});
+                    if (isCalculation) {
+                        this.isOnceMarkerSet = true;
+                        String url = getMapsApiDirectionsUrl(this.sourceMarker.getPosition(), this.currentLocationMarker.getPosition());
+                        OnTripActivity onTripActivity = this;
+                        new ReadTask().execute(new String[]{url});
+                    } else {
+                        this.isOnceMarkerSet = true;
+                        String url = getMapsApiDirectionsUrl(this.sourceMarker.getPosition(), this.destMarker.getPosition());
+                        OnTripActivity onTripActivity = this;
+                        new ReadTask().execute(new String[]{url});
+                    }
+
                 }
                 RequestParams pp = new RequestParams();
                 pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
@@ -1173,6 +1190,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         RequestParams p = new RequestParams();
         p.put("trip_id", this.currentTrip.getTrip_id());
         p.put("floter_id", this.payment.getPayment_id());
+        p.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
         postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "", 26);
         this.txt_trip_payment.setText("Rs. " + this.payment.getPay_amount());
         this.slideUp.show();

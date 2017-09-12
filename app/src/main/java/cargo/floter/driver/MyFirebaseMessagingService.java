@@ -30,76 +30,77 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
 
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (MyApp.getStatus(AppConstants.IS_LOGIN)) {
+        if (MyApp.getStatus(AppConstants.ON_JOB))
+            if (MyApp.getStatus(AppConstants.IS_LOGIN)) {
 
-            Log.d(TAG, "From: " + remoteMessage.getFrom());
-            if (remoteMessage.getData().size() > 0) {
-                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-                Map<String, String> dataMap = remoteMessage.getData();
-                if (dataMap.containsKey("trip_status")) {
-                    String tripStatus = dataMap.get("trip_status");
-                    Intent i;
-                    if (tripStatus.equals(TripStatus.Pending.name())) {
-                        MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID,
-                                remoteMessage.getData().get("trip_id"));
-                        if (MyApp.getStatus(AppConstants.IS_LOGIN)) {
-                            MyApp.setStatus("ALLOW_TRIP", true);
-                            if (MyApp.getStatus(AppConstants.IS_OPEN)) {
-                                i = new Intent("cargo.floter.driver.RIDE");
-                                i.putExtra("TYPE", "NEW_TRIP");
+                Log.d(TAG, "From: " + remoteMessage.getFrom());
+                if (remoteMessage.getData().size() > 0) {
+                    Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+                    Map<String, String> dataMap = remoteMessage.getData();
+                    if (dataMap.containsKey("trip_status")) {
+                        String tripStatus = dataMap.get("trip_status");
+                        Intent i;
+                        if (tripStatus.equals(TripStatus.Pending.name())) {
+                            MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID,
+                                    remoteMessage.getData().get("trip_id"));
+                            if (MyApp.getStatus(AppConstants.IS_LOGIN)) {
+                                MyApp.setStatus("ALLOW_TRIP", true);
+                                if (MyApp.getStatus(AppConstants.IS_OPEN)) {
+                                    i = new Intent("cargo.floter.driver.RIDE");
+                                    i.putExtra("TYPE", "NEW_TRIP");
 //                            timestamp
+                                    long millis = 0;
+                                    try {
+                                        JSONObject o = new JSONObject(remoteMessage.getData().get("object"));
+                                        millis = o.optLong("timestamp");
+
+                                        SingleInstance.getInstance().setJsonTripPayload(o);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (millis != 0 && (System.currentTimeMillis() - millis) > 30000) {
+                                        return;
+                                    }
+                                    sendBroadcast(i);
+                                    return;
+                                }
                                 long millis = 0;
                                 try {
                                     JSONObject o = new JSONObject(remoteMessage.getData().get("object"));
                                     millis = o.optLong("timestamp");
-
                                     SingleInstance.getInstance().setJsonTripPayload(o);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                } catch (JSONException e2) {
+                                    e2.printStackTrace();
                                 }
-                                if ((System.currentTimeMillis() - millis) > 30000) {
+                                if (millis != 0 && (System.currentTimeMillis() - millis) > 30000) {
                                     return;
                                 }
+                                sendNewRideNotification("New booking arrived\nclick to open.", remoteMessage.getData().get("trip_id"));
+                            }
+                        } else if (tripStatus.equals(TripStatus.Cancelled.name())) {
+                            MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
+                            MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
+                            if (MyApp.getStatus(AppConstants.IS_OPEN)) {
+                                i = new Intent("cargo.floter.driver.RIDE");
+                                i.putExtra("TYPE", "CANCELLED");
                                 sendBroadcast(i);
                                 return;
                             }
-                            long millis = 0;
-                            try {
-                                JSONObject o = new JSONObject(remoteMessage.getData().get("object"));
-                                millis = o.optLong("timestamp");
-                                SingleInstance.getInstance().setJsonTripPayload(o);
-                            } catch (JSONException e2) {
-                                e2.printStackTrace();
-                            }
-                            if ((System.currentTimeMillis() - millis) > 30000) {
-                                return;
-                            }
-                            sendNewRideNotification("New booking arrived\nclick to open.", remoteMessage.getData().get("trip_id"));
-                        }
-                    } else if (tripStatus.equals(TripStatus.Cancelled.name())) {
-                        MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
-                        MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
-                        if (MyApp.getStatus(AppConstants.IS_OPEN)) {
-                            i = new Intent("cargo.floter.driver.RIDE");
-                            i.putExtra("TYPE", "CANCELLED");
-                            sendBroadcast(i);
-                            return;
-                        }
-                        sendCancelBookingNotification(dataMap.get("trip_id"), dataMap.get(MyApp.EXTRA_MESSAGE));
-                    } else if (tripStatus.equals(TripStatus.Accepted.name())) {
-                        MyApp.setStatus(AppConstants.IS_ON_TRIP, true);
-                        MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, remoteMessage.getData().get("trip_id"));
-                        sendNewRideNotification("New Trip Assigned by Floter\nclick to open.", remoteMessage.getData().get("trip_id"));
-                    } else if (tripStatus.equals(TripStatus.Finished.name())) {
-                        sendNotification(dataMap.get(MyApp.EXTRA_MESSAGE));
-                    } else if (tripStatus.equals("upcoming") || tripStatus.equals(TripStatus.Upcoming.name())) {
+                            sendCancelBookingNotification(dataMap.get("trip_id"), dataMap.get(MyApp.EXTRA_MESSAGE));
+                        } else if (tripStatus.equals(TripStatus.Accepted.name())) {
+                            MyApp.setStatus(AppConstants.IS_ON_TRIP, true);
+                            MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, remoteMessage.getData().get("trip_id"));
+                            sendNewRideNotification("New Trip Assigned by Floter\nclick to open.", remoteMessage.getData().get("trip_id"));
+                        } else if (tripStatus.equals(TripStatus.Finished.name())) {
+                            sendNotification(dataMap.get(MyApp.EXTRA_MESSAGE));
+                        } else if (tripStatus.equals("upcoming") || tripStatus.equals(TripStatus.Upcoming.name())) {
 //                    MyApp.setStatus(AppConstants.IS_ON_TRIP, true);
 //                    MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, remoteMessage.getData().get("trip_id"));
-                        sendUpcomingNotification("New Upcoming Trip has been Assigned by Floter\nclick to open.", remoteMessage.getData().get("trip_id"));
+                            sendUpcomingNotification("New Upcoming Trip has been Assigned by Floter\nclick to open.", remoteMessage.getData().get("trip_id"));
+                        }
                     }
                 }
             }
-        }
     }
 
 

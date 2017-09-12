@@ -37,6 +37,10 @@
             android:screenOrientation="portrait"></activity>
 
         <activity
+            android:name=".TestLocationActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
             android:name=".VerifyPhoneNumberActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"></activity>

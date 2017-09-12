@@ -3,9 +3,11 @@ package cargo.floter.driver;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -13,6 +15,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -58,6 +61,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
@@ -154,6 +161,64 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         onNewIntent(getIntent());
 
         handler.postDelayed(newTripCallback, 2000);
+        locationHandler.postDelayed(locationUpdateCallback, 5000);
+
+        checkForUpdate();
+    }
+
+    private void checkForUpdate() {
+        FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseInstance.getReference("driver").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                PackageManager manager = getPackageManager();
+                PackageInfo info = null;
+                try {
+                    info = manager.getPackageInfo(
+                            getPackageName(), 0);
+                    String version = info.versionCode + "";
+                    if (version.equals(value)) {
+
+                    } else {
+                        AlertDialog.Builder b = new AlertDialog.Builder(getContext());
+                        b.setTitle("Update App");
+                        b.setMessage("New version is available of the app, please update the app first to use" +
+                                " improved and better features of the app." +
+                                "\nThank you.")
+                                .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface d, int which) {
+                                        d.dismiss();
+                                        startActivity(new Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("http://play.google.com/store/apps/details?id="
+                                                        + getPackageName())));
+                                        finish();
+                                    }
+                                }).setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface d, int which) {
+                                d.dismiss();
+                                finish();
+                            }
+                        }).create().show();
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("myRef", "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
+
     }
 
     public void onNewIntent(Intent intent) {
@@ -163,13 +228,15 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 isTimerDialogShown = true;
                 JSONObject o = SingleInstance.getInstance().getJsonTripPayload();
                 if (o == null) {
+                    isTimerDialogShown = false;
                     return;
                 }
                 long millis = o.optLong("timestamp");
-                if ((System.currentTimeMillis() - millis) > 30000) {
+                if (o.has("timestamp") && (System.currentTimeMillis() - millis) > 30000) {
                     MyApp.popMessage("Floter Message", "You have missed the chance to get this trip." +
                             "\nTry to accept trip within 30 seconds from next time onwards." +
                             "\nThank you.", getContext());
+                    isTimerDialogShown = false;
                     return;
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -482,6 +549,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
 
         RequestParams p = new RequestParams();
         p.put("trip_id", MyApp.getSharedPrefString(AppConstants.CURRENT_TRIP_ID));
+        p.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
         if (b) {
             p.put("trip_status", TripStatus.Accepted.name());
             postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "Please wait...", 5);
@@ -587,6 +655,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                                         44);
                             } catch (IntentSender.SendIntentException e) {
                                 e.printStackTrace();
+                            } catch (Exception e) {
                             }
                             break;
                     }
@@ -685,7 +754,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
         postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
 
-//         http://floter.in/floterapi/index.php/driverapi/updatedriverprofile?api_key=ee059a1e2596c265fd61c44f1855875e&driver_id=93&d_address=delhi
         RequestParams pp = new RequestParams();
         Driver u = MyApp.getApplication().readDriver();
         pp.put("driver_id", u.getDriver_id());
@@ -726,6 +794,8 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         }
     }
 
+    private boolean onceZoomed = false;
+
     private void changeMap(Location location) {
         if (mMap != null) {
             mMap.getUiSettings().setZoomControlsEnabled(false);
@@ -733,7 +803,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             latLong = new LatLng(location.getLatitude(), location.getLongitude());
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(latLong).zoom(15.5f).tilt(0).build();
+                    .target(latLong).build();
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1010);
@@ -742,8 +812,12 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             }
 
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            mMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(cameraPosition));
+            if (!onceZoomed) {
+                onceZoomed = !onceZoomed;
+                mMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(cameraPosition));
+            }
+
 
         } else {
             Toast.makeText(getApplicationContext(),
@@ -870,9 +944,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             }
 
             MyApp.getApplication().writeTrip(t);
-
             MyApp.spinnerStart(getContext(), "Please wait...");
-
             RequestParams pp = new RequestParams();
             pp.put("message", "Trip Accepted");
             pp.put("trip_id", t.getTrip_id());
@@ -888,9 +960,10 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             rp.put("apikey", "268de3c4-5565-11e7-94da-0200cd936042");
             rp.put("to", t.getUser().getU_mobile());
             rp.put("from", "FLOTER");
+            Driver d = MyApp.getApplication().readDriver();
             rp.put("msg", "Namaste! " + t.getUser().getU_fname() + ",\n"
                     + "Driver : " +
-                    t.getDriver().getD_name() + "(" + t.getDriver().getD_phone() + ") is on the way for order FDA-" + t.getTrip_id()
+                    d.getD_name() + "(" + d.getD_phone() + ") is on the way for order FDA-" + t.getTrip_id()
                     + ".\nThank you.");
 
             ac.post("https://2factor.in/API/R1/?", rp, new JsonHttpResponseHandler());
@@ -1263,7 +1336,9 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             }
         });
     }
+
     LocationManager mLocationManager;
+
     private Location getLastKnownLocation() {
         mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
         List<String> providers = mLocationManager.getProviders(true);
@@ -1288,28 +1363,38 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
     private Runnable locationUpdateCallback = new Runnable() {
         @Override
         public void run() {
-            Location location = getLastKnownLocation();
-            if (location != null) {
-                currentLocation = location;
-            }
-            try {
-                RequestParams p = new RequestParams();
-                p.put("lat", currentLocation.getLatitude());
-                p.put("lng", currentLocation.getLongitude());
-                p.put("miles", 12);
-                p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-                postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
-                RequestParams pp = new RequestParams();
-                pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
-                pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-                pp.put("d_lat", currentLocation.getLatitude() + "");
-                pp.put("d_lng", currentLocation.getLongitude() + "");
-                pp.put("d_degree", Float.valueOf(currentLocation.getBearing()));
-                postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            locationProvider = new LocationProvider(MainActivity.this, MainActivity.this, MainActivity.this);
+            locationProvider.connect();
+//            Location location = getLastKnownLocation();
+//            if (location != null) {
+//                currentLocation = location;
+//                try {
+//                    if (location != null) {
+//                        getNearbyUsers(location.getLatitude() + "", location.getLongitude() + "");
+//                        changeMap(location);
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            try {
+//                RequestParams p = new RequestParams();
+//                p.put("lat", currentLocation.getLatitude());
+//                p.put("lng", currentLocation.getLongitude());
+//                p.put("miles", 12);
+//                p.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+//                postCall(getContext(), AppConstants.BASE_URL.replace("driverapi", "userapi") + "getnearbyuserlists?", p, "", 1);
+//                RequestParams pp = new RequestParams();
+//                pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
+//                pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
+//                pp.put("d_lat", currentLocation.getLatitude() + "");
+//                pp.put("d_lng", currentLocation.getLongitude() + "");
+//                pp.put("d_degree", Float.valueOf(currentLocation.getBearing()));
+//                postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
             locationHandler.postDelayed(locationUpdateCallback, 5000);
 
         }
