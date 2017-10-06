@@ -34,6 +34,17 @@
                     android:textColor="@color/white"
                     android:textSize="20.0sp"
                     android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/txt_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:background="?attr/selectableItemBackground"
+                    android:text="Cancel"
+                    android:padding="@dimen/dim_15"
+                    android:textColor="@color/white"
+                    android:textSize="20.0sp"
+                    android:textStyle="bold" />
             </android.support.v7.widget.Toolbar>
         </RelativeLayout>
 

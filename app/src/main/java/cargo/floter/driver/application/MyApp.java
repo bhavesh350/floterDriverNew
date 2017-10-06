@@ -86,7 +86,7 @@ public class MyApp extends Application {
         String pleaseWait = text;
         dialog = ProgressDialog.show(context, pleaseWait, "", true);
 
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
     }
 

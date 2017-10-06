@@ -7,6 +7,7 @@ package cargo.floter.driver.model;
 public enum TripStatus {
     Accepted,
     Cancelled,
+    Driver_Cancel,
     Pending,
     Finished,
     OnGoing,

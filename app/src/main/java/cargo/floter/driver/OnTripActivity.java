@@ -2,12 +2,12 @@ package cargo.floter.driver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -127,6 +128,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     private Marker sourceMarker = null;
     private TextView txt_direction;
     private TextView txt_pay_mode;
+    private TextView txt_cancel;
     private TextView txt_rating_status;
     private TextView txt_trip_payment;
     private TextView txt_user_name;
@@ -354,7 +356,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                         JSONArray jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
                         for (int k = 0; k < jSteps.length(); k++) {
                             String polyline = "";
-                            List<LatLng> list = decodePoly((String)((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points"));
+                            List<LatLng> list = decodePoly((String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points"));
                             for (int l = 0; l < list.size(); l++) {
                                 HashMap<String, String> hm = new HashMap();
                                 hm.put("lat", Double.toString(((LatLng) list.get(l)).latitude));
@@ -525,6 +527,12 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             MyApp.setSharedPrefString("button", "btn_arrived");
         }
 
+        @Override
+        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+            super.onFailure(statusCode, headers, throwable, errorResponse);
+            MyApp.spinnerStop();
+        }
+
         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
             super.onFailure(statusCode, headers, throwable, errorResponse);
             MyApp.spinnerStop();
@@ -571,6 +579,8 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         this.radio_group = (RadioGroup) findViewById(R.id.radio_group);
         this.txt_rating_status = (TextView) findViewById(R.id.txt_rating_status);
         this.txt_pay_mode = (TextView) findViewById(R.id.txt_pay_mode);
+        this.txt_cancel = (TextView) findViewById(R.id.txt_cancel);
+        setTouchNClick(R.id.txt_cancel);
         this.txt_trip_payment = (TextView) findViewById(R.id.txt_trip_payment);
         this.txt_user_name = (TextView) findViewById(R.id.txt_user_name);
         this.txt_direction = (TextView) findViewById(R.id.txt_direction);
@@ -645,6 +655,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 this.btn_stop.setVisibility(View.VISIBLE);
             }
         } else if (this.currentTrip.getTrip_status().equals(TripStatus.Cancelled.name())) {
+            MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
+            MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
+            startActivity(new Intent(getContext(), MainActivity.class));
+            MyApp.setSharedPrefString("button", "");
+        } else if (this.currentTrip.getTrip_status().equals(TripStatus.Driver_Cancel.name())) {
             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID, "");
             MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
             startActivity(new Intent(getContext(), MainActivity.class));
@@ -762,6 +777,22 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             changeTripStatus(TripStatus.Reached.name());
             MyApp.setSharedPrefLong(AppConstants.TRIP_UNLOAD_START + this.currentTrip.getTrip_id(), System.currentTimeMillis());
             MyApp.setSharedPrefString("button", "btn_reached");
+        } else if (v == txt_cancel) {
+            AlertDialog.Builder b = new AlertDialog.Builder(getContext());
+            b.setTitle("Cancel Trip").setMessage("Are you sure that you want to cancel trip?\nMake sure it will reflect as " +
+                    "a bad impact to your profile. So avoid cancellation by your end.\nThank you")
+                    .setPositiveButton("YES, Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface d, int which) {
+                            d.cancel();
+                            changeTripStatus(TripStatus.Driver_Cancel.name());
+                        }
+                    }).setNegativeButton("Don't Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface d, int which) {
+                    d.cancel();
+                }
+            }).create().show();
         }
     }
 
@@ -823,6 +854,15 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         } else if (trip_status.equals(TripStatus.Reached.name())) {
             pp = new RequestParams();
             pp.put(MyApp.EXTRA_MESSAGE, "Driver Reached at your destination.\nPlease proceed for unloading of your goods.");
+            pp.put("trip_id", this.currentTrip.getTrip_id());
+            pp.put("trip_status", trip_status);
+            pp.put("android", this.currentTrip.getUser().getU_device_token());
+            client = new AsyncHttpClient();
+            client.setTimeout(30000);
+            client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07526());
+        }else if (trip_status.equals(TripStatus.Driver_Cancel.name())) {
+            pp = new RequestParams();
+            pp.put(MyApp.EXTRA_MESSAGE, "This trip has been cancelled by driver, please reach to us if it's not requested by you.");
             pp.put("trip_id", this.currentTrip.getTrip_id());
             pp.put("trip_status", trip_status);
             pp.put("android", this.currentTrip.getUser().getU_device_token());
@@ -1124,6 +1164,11 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 startActivity(new Intent(getContext(), MainActivity.class));
                 MyApp.setSharedPrefString("button", "");
                 finishAffinity();
+            }  else if (t.getTrip_status().equals(TripStatus.Driver_Cancel.name())) {
+                MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
+                startActivity(new Intent(getContext(), MainActivity.class));
+                MyApp.setSharedPrefString("button", "");
+                finishAffinity();
             } else {
                 this.currentTrip = t;
                 MyApp.getApplication().writeTrip(t);
@@ -1201,9 +1246,27 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         pp.put("android", this.currentTrip.getUser().getU_device_token());
         AsyncHttpClient client = new AsyncHttpClient();
         client.setTimeout(30000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MyApp.spinnerStop();
+            }
+        }, 30000);
         client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d("Response:", response.toString());
+                MyApp.spinnerStop();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                MyApp.spinnerStop();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
                 MyApp.spinnerStop();
             }
 

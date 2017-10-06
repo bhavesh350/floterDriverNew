@@ -40,7 +40,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     if (dataMap.containsKey("trip_status")) {
                         String tripStatus = dataMap.get("trip_status");
                         Intent i;
-                        if (tripStatus.equals(TripStatus.Pending.name())) {
+                        if (tripStatus.equals(TripStatus.Pending.name()) && !MyApp.getStatus(AppConstants.IS_ON_TRIP)) {
                             MyApp.setSharedPrefString(AppConstants.CURRENT_TRIP_ID,
                                     remoteMessage.getData().get("trip_id"));
                             if (MyApp.getStatus(AppConstants.IS_LOGIN)) {

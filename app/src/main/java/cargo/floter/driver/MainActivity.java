@@ -773,10 +773,12 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         pp.put("driver_id", u.getDriver_id());
         pp.put("d_is_available", status ? 1 : 0);
         pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
-        pp.put("d_lat", currentLocation.getLatitude() + "");
-        pp.put("d_lng", currentLocation.getLongitude() + "");
-
-        postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "Updating status...", 2);
+        try {
+            pp.put("d_lat", currentLocation.getLatitude() + "");
+            pp.put("d_lng", currentLocation.getLongitude() + "");
+            postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "Updating status...", 2);
+        }catch (Exception e){
+        }
     }
 
     private Context getContext() {
