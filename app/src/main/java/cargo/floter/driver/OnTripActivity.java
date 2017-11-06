@@ -297,6 +297,9 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 if (f == 0) {
                     f = (float) MyApp.distance(sourceMarker.getPosition().latitude, sourceMarker.getPosition().longitude
                             , currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude);
+                    if (f < 4) {
+                        f = 1;
+                    }
                 }
                 if (f > 2.0f) {
                     try {
@@ -810,7 +813,10 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
     }
 
     private int loadingUnloadingTime() {
-        return (int) TimeUnit.MILLISECONDS.toMinutes((MyApp.getSharedPrefLong(AppConstants.TRIP_LOAD_END) - MyApp.getSharedPrefLong(AppConstants.TRIP_LOAD_START)) + (MyApp.getSharedPrefLong(AppConstants.TRIP_UNLOAD_END) - MyApp.getSharedPrefLong(AppConstants.TRIP_UNLOAD_START)));
+        return (int) TimeUnit.MILLISECONDS.toMinutes((MyApp.getSharedPrefLong(AppConstants.TRIP_LOAD_END + this.currentTrip.getTrip_id())
+                - MyApp.getSharedPrefLong(AppConstants.TRIP_LOAD_START + this.currentTrip.getTrip_id()))
+                + (MyApp.getSharedPrefLong(AppConstants.TRIP_UNLOAD_END + this.currentTrip.getTrip_id())
+                - MyApp.getSharedPrefLong(AppConstants.TRIP_UNLOAD_START + this.currentTrip.getTrip_id())));
     }
 
 
@@ -860,7 +866,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             client = new AsyncHttpClient();
             client.setTimeout(30000);
             client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07526());
-        }else if (trip_status.equals(TripStatus.Driver_Cancel.name())) {
+        } else if (trip_status.equals(TripStatus.Driver_Cancel.name())) {
             pp = new RequestParams();
             pp.put(MyApp.EXTRA_MESSAGE, "This trip has been cancelled by driver, please reach to us if it's not requested by you.");
             pp.put("trip_id", this.currentTrip.getTrip_id());
@@ -1026,6 +1032,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
                 pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
                 pp.put("d_lat", this.currentLocation.getLatitude() + "");
+                pp.put("d_is_available", 0);
                 pp.put("d_lng", this.currentLocation.getLongitude() + "");
                 pp.put("d_degree", Float.valueOf(location.getBearing()));
                 postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);
@@ -1164,7 +1171,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 startActivity(new Intent(getContext(), MainActivity.class));
                 MyApp.setSharedPrefString("button", "");
                 finishAffinity();
-            }  else if (t.getTrip_status().equals(TripStatus.Driver_Cancel.name())) {
+            } else if (t.getTrip_status().equals(TripStatus.Driver_Cancel.name())) {
                 MyApp.setStatus(AppConstants.IS_ON_TRIP, false);
                 startActivity(new Intent(getContext(), MainActivity.class));
                 MyApp.setSharedPrefString("button", "");
@@ -1388,6 +1395,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                     pp.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
                     pp.put("api_key", "ee059a1e2596c265fd61c44f1855875e");
                     pp.put("d_lat", currentLocation.getLatitude() + "");
+                    pp.put("d_is_available", 0);
                     pp.put("d_lng", currentLocation.getLongitude() + "");
                     pp.put("d_degree", Float.valueOf(myLocation.getBearing()));
                     postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "", 10);

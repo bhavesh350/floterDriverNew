@@ -914,10 +914,12 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             if (t == null) {
                 MyApp.popMessage("Error!", "Trip not found...", getContext());
                 return;
-            } else if (t.getTrip_status().equals(TripStatus.Cancelled.name()) || t.getTrip_status().equals(TripStatus.Declined.name())) {
+            } else if (t.getTrip_status().equals(TripStatus.Cancelled.name()) ||
+                    t.getTrip_status().equals(TripStatus.Declined.name())) {
+
                 if (t.getTrip_status().equals(TripStatus.Declined.name())) {
                     RequestParams pp = new RequestParams();
-                    pp.put("message", "Trip Accepted");
+                    pp.put("message", "Trip Declined");
                     pp.put("trip_id", t.getTrip_id());
                     pp.put("trip_status", TripStatus.Declined.name());
                     pp.put("android", t.getUser().getU_device_token());
