@@ -17,6 +17,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -134,7 +135,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         locationProvider = new LocationProvider(this, this, this);
-//        mLocationMarkerText = (TextView) findViewById(R.id.locMarkertext);
         img_job_status = (ImageButton) findViewById(R.id.img_job_status);
         setupUiElements();
         if (MyApp.getStatus(AppConstants.ON_JOB)) {
@@ -146,8 +146,6 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        /*mTitle = (TextView) mToolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("FLOTER");*/
 
         actionBar.setTitle("");
         setResponseListener(this);
@@ -164,6 +162,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         locationHandler.postDelayed(locationUpdateCallback, 5000);
 
         checkForUpdate();
+
     }
 
     private void checkForUpdate() {
@@ -232,7 +231,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     return;
                 }
                 long millis = o.optLong("timestamp");
-                if (o.has("timestamp") && (System.currentTimeMillis() - millis) > 30000) {
+                if (o.has("timestamp") && (System.currentTimeMillis() - millis) > 40000) {
                     MyApp.popMessage("Floter Message", "You have missed the chance to get this trip." +
                             "\nTry to accept trip within 30 seconds from next time onwards." +
                             "\nThank you.", getContext());
@@ -243,13 +242,13 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 View mView = getLayoutInflater().inflate(R.layout.activit_dialog, null);
                 Button decline = (Button) mView.findViewById(R.id.ride_decline);
                 Button accept = (Button) mView.findViewById(R.id.ride_accept);
-                TextView txt_user_name = (TextView) mView.findViewById(R.id.txt_user_name);
-                TextView txt_source_address = (TextView) mView.findViewById(R.id.txt_source_address);
-                TextView txt_request = (TextView) mView.findViewById(R.id.txt_request);
-                TextView txt_dest_address = (TextView) mView.findViewById(R.id.txt_dest_address);
-                TextView txt_est_time = (TextView) mView.findViewById(R.id.txt_est_time);
-                TextView txt_est_distance = (TextView) mView.findViewById(R.id.txt_est_distance);
-                TextView txt_est_price = (TextView) mView.findViewById(R.id.txt_est_price);
+                TextView txt_user_name =  mView.findViewById(R.id.txt_user_name);
+                TextView txt_source_address =  mView.findViewById(R.id.txt_source_address);
+                TextView txt_request =  mView.findViewById(R.id.txt_request);
+                TextView txt_dest_address =  mView.findViewById(R.id.txt_dest_address);
+                TextView txt_est_time =  mView.findViewById(R.id.txt_est_time);
+                TextView txt_est_distance =  mView.findViewById(R.id.txt_est_distance);
+                TextView txt_est_price =  mView.findViewById(R.id.txt_est_price);
                 String estCost = o.optString("est_amount");
                 txt_est_price.setText("Est. Cost\nRs. " + estCost);
                 txt_user_name.setText(o.optString("u_name"));
@@ -269,14 +268,14 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                 final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.new_booking);
                 mp.start();
                 mp.setLooping(true);
-                final CountDownTimer countDownTimer = new CountDownTimer((long) 30000, 1000) {
+                final CountDownTimer countDownTimer = new CountDownTimer((long) 40000, 1000) {
                     public void onTick(long millisUntilFinished) {
-                        countDownView.setProgress(progress, 30);
+                        countDownView.setProgress(progress, 40);
                         progress = progress + 1;
                     }
 
                     public void onFinish() {
-                        countDownView.setProgress(progress, 30);
+                        countDownView.setProgress(progress, 40);
                         dialog.dismiss();
                         mp.stop();
                         dialog.dismiss();
@@ -420,12 +419,23 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         }
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
         MyApp.setStatus(AppConstants.IS_OPEN, false);
         locationProvider.disconnect();
         unregisterReceiver(receiver);
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(getApplicationContext(), LocationService.class);
+                startService(intent);
+            }
+        } else {
+            Intent intent = new Intent(getApplicationContext(), LocationService.class);
+            startService(intent);
+        }
     }
 
     private int progress;
@@ -440,15 +450,15 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     JSONObject o = new JSONObject(SingleInstance.getInstance().getJsonTripPayload().toString());
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     View mView = getLayoutInflater().inflate(R.layout.activit_dialog, null);
-                    Button decline = (Button) mView.findViewById(R.id.ride_decline);
-                    Button accept = (Button) mView.findViewById(R.id.ride_accept);
-                    TextView txt_user_name = (TextView) mView.findViewById(R.id.txt_user_name);
-                    TextView txt_source_address = (TextView) mView.findViewById(R.id.txt_source_address);
-                    TextView txt_dest_address = (TextView) mView.findViewById(R.id.txt_dest_address);
-                    TextView txt_est_time = (TextView) mView.findViewById(R.id.txt_est_time);
-                    TextView txt_est_distance = (TextView) mView.findViewById(R.id.txt_est_distance);
-                    TextView txt_request = (TextView) mView.findViewById(R.id.txt_request);
-                    TextView txt_est_price = (TextView) mView.findViewById(R.id.txt_est_price);
+                    Button decline =  mView.findViewById(R.id.ride_decline);
+                    Button accept =  mView.findViewById(R.id.ride_accept);
+                    TextView txt_user_name =  mView.findViewById(R.id.txt_user_name);
+                    TextView txt_source_address =  mView.findViewById(R.id.txt_source_address);
+                    TextView txt_dest_address =  mView.findViewById(R.id.txt_dest_address);
+                    TextView txt_est_time =  mView.findViewById(R.id.txt_est_time);
+                    TextView txt_est_distance =  mView.findViewById(R.id.txt_est_distance);
+                    TextView txt_request =  mView.findViewById(R.id.txt_request);
+                    TextView txt_est_price =  mView.findViewById(R.id.txt_est_price);
                     String estCost = o.optString("est_amount");
                     txt_est_price.setText("Est. Cost\nRs. " + estCost);
                     txt_user_name.setText(o.optString("u_name"));
@@ -468,14 +478,14 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.new_booking);
                     mp.start();
                     mp.setLooping(true);
-                    final CountDownTimer countDownTimer = new CountDownTimer((long) 30000, 1000) {
+                    final CountDownTimer countDownTimer = new CountDownTimer((long) 40000, 1000) {
                         public void onTick(long millisUntilFinished) {
-                            countDownView.setProgress(progress, 30);
+                            countDownView.setProgress(progress, 40);
                             progress = progress + 1;
                         }
 
                         public void onFinish() {
-                            countDownView.setProgress(progress, 30);
+                            countDownView.setProgress(progress, 40);
                             dialog.dismiss();
                             mp.stop();
                             dialog.dismiss();
@@ -693,6 +703,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         }
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -731,12 +742,14 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
         }
     }
 
+    private boolean onceLocationUpdated = false;
 
     @Override
     public void handleNewLocation(Location location) {
         currentLocation = location;
         try {
-            if (location != null) {
+            if (location != null && !onceLocationUpdated) {
+                onceLocationUpdated = true;
                 getNearbyUsers(location.getLatitude() + "", location.getLongitude() + "");
                 changeMap(location);
             }
@@ -777,7 +790,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             pp.put("d_lat", currentLocation.getLatitude() + "");
             pp.put("d_lng", currentLocation.getLongitude() + "");
             postCall(getContext(), AppConstants.BASE_URL + "updatedriverprofile?", pp, "Updating status...", 2);
-        }catch (Exception e){
+        } catch (Exception e) {
         }
     }
 
@@ -788,6 +801,8 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        locationProvider = new LocationProvider(this, this, this);
+        locationProvider.connect();
         if (requestCode == 1010) {
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
                     PackageManager.PERMISSION_DENIED) {
@@ -925,7 +940,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     pp.put("android", t.getUser().getU_device_token());
                     AsyncHttpClient client = new AsyncHttpClient();
                     client.setTimeout(30000);
-                    client.post("http://floter.in/floterapi/push/RiderPushNotification?",
+                    client.post("http://floter.in/floterapi/push/RiderPushNotification.php?",
                             pp, new JsonHttpResponseHandler() {
 
                                 @Override
@@ -973,7 +988,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
             ac.post("https://2factor.in/API/R1/?", rp, new JsonHttpResponseHandler());
 
 //             http://floter.in/floterapi/push/RiderPushNotification?message={"json":"json"}&android=1hTgw2d_BrDwhYH_lN&trip_id=10&trip_status=accept&object={"json":"json"}
-            client.post("http://floter.in/floterapi/push/RiderPushNotification?",
+            client.post("http://floter.in/floterapi/push/RiderPushNotification.php?",
                     pp, new JsonHttpResponseHandler() {
 
                         @Override

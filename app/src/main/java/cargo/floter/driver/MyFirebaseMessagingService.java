@@ -7,9 +7,11 @@ package cargo.floter.driver;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -110,9 +112,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("trip_id", tripId);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String messageText = messageBody;
+
+        Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
+                + "://" + getPackageName() + "/raw/new_booking_tone");
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification mNotification = new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.ic_launcher).setContentTitle("New Booking Request").setContentText(messageText)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(messageText)).setAutoCancel(false).setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)).setContentIntent(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)).build();
+        Notification mNotification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("New Booking Request")
+                .setContentText(messageText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(messageText))
+                .setAutoCancel(false)
+                .setSound(alarmSound)
+//                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT))
+                .build();
         mNotification.flags = 21;
         try {
             notificationManager.notify(Integer.parseInt(MyApp.getSharedPrefString(AppConstants.CURRENT_TRIP_ID)), mNotification);

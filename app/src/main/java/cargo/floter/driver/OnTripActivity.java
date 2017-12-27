@@ -847,7 +847,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             pp.put("android", this.currentTrip.getUser().getU_device_token());
             client = new AsyncHttpClient();
             client.setTimeout(30000);
-            client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07504());
+            client.post("http://floter.in/floterapi/push/RiderPushNotification.php?", pp, new C07504());
         } else if (trip_status.equals(TripStatus.Loading.name())) {
             pp = new RequestParams();
             pp.put(MyApp.EXTRA_MESSAGE, "Loading goods for your trip is done\nDriver is all set to start the trip now.");
@@ -856,7 +856,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             pp.put("android", this.currentTrip.getUser().getU_device_token());
             client = new AsyncHttpClient();
             client.setTimeout(30000);
-            client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07515());
+            client.post("http://floter.in/floterapi/push/RiderPushNotification.php?", pp, new C07515());
         } else if (trip_status.equals(TripStatus.Reached.name())) {
             pp = new RequestParams();
             pp.put(MyApp.EXTRA_MESSAGE, "Driver Reached at your destination.\nPlease proceed for unloading of your goods.");
@@ -865,7 +865,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             pp.put("android", this.currentTrip.getUser().getU_device_token());
             client = new AsyncHttpClient();
             client.setTimeout(30000);
-            client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07526());
+            client.post("http://floter.in/floterapi/push/RiderPushNotification.php?", pp, new C07526());
         } else if (trip_status.equals(TripStatus.Driver_Cancel.name())) {
             pp = new RequestParams();
             pp.put(MyApp.EXTRA_MESSAGE, "This trip has been cancelled by driver, please reach to us if it's not requested by you.");
@@ -874,7 +874,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             pp.put("android", this.currentTrip.getUser().getU_device_token());
             client = new AsyncHttpClient();
             client.setTimeout(30000);
-            client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07526());
+            client.post("http://floter.in/floterapi/push/RiderPushNotification.php?", pp, new C07526());
         }
     }
 
@@ -886,7 +886,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
         pp.put("trip_id", this.currentTrip.getTrip_id());
         AsyncHttpClient client = new AsyncHttpClient();
         client.setTimeout(30000);
-        client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new C07537());
+        client.post("http://floter.in/floterapi/push/RiderPushNotification.php?", pp, new C07537());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1259,7 +1259,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 MyApp.spinnerStop();
             }
         }, 30000);
-        client.post("http://floter.in/floterapi/push/RiderPushNotification?", pp, new JsonHttpResponseHandler() {
+        client.post("http://floter.in/floterapi/push/RiderPushNotification.php?", pp, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d("Response:", response.toString());
                 MyApp.spinnerStop();
