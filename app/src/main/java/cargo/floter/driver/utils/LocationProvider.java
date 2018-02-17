@@ -79,7 +79,6 @@ public class LocationProvider implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i(TAG, "Location services connected.");
 
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED &&

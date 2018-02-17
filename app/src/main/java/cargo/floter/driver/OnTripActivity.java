@@ -297,9 +297,9 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 if (f == 0) {
                     f = (float) MyApp.distance(sourceMarker.getPosition().latitude, sourceMarker.getPosition().longitude
                             , currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude);
-                    if (f < 4) {
-                        f = 1;
-                    }
+//                    if (f < 4) {
+//                        f = 1;
+//                    }
                 }
                 if (f > 2.0f) {
                     try {
@@ -580,23 +580,23 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
 
     private void setupUiElements() {
         this.radio_group = (RadioGroup) findViewById(R.id.radio_group);
-        this.txt_rating_status = (TextView) findViewById(R.id.txt_rating_status);
-        this.txt_pay_mode = (TextView) findViewById(R.id.txt_pay_mode);
-        this.txt_cancel = (TextView) findViewById(R.id.txt_cancel);
+        this.txt_rating_status = findViewById(R.id.txt_rating_status);
+        this.txt_pay_mode = findViewById(R.id.txt_pay_mode);
+        this.txt_cancel = findViewById(R.id.txt_cancel);
         setTouchNClick(R.id.txt_cancel);
-        this.txt_trip_payment = (TextView) findViewById(R.id.txt_trip_payment);
-        this.txt_user_name = (TextView) findViewById(R.id.txt_user_name);
-        this.txt_direction = (TextView) findViewById(R.id.txt_direction);
-        this.btn_call_user = (Button) findViewById(R.id.btn_call_user);
-        this.btn_arrived = (Button) findViewById(R.id.btn_arrived);
-        this.btn_unloading_done = (Button) findViewById(R.id.btn_unloading_done);
-        this.btn_reached = (Button) findViewById(R.id.btn_reached);
-        this.btn_loading_done = (Button) findViewById(R.id.btn_loading_done);
-        this.btn_start = (Button) findViewById(R.id.btn_start);
-        this.btn_stop = (Button) findViewById(R.id.btn_stop);
-        this.btn_submit = (Button) findViewById(R.id.btn_submit);
-        this.rating_bar = (RatingBar) findViewById(R.id.rating_bar);
-        this.ll_feedback = (LinearLayout) findViewById(R.id.ll_feedback);
+        this.txt_trip_payment = findViewById(R.id.txt_trip_payment);
+        this.txt_user_name = findViewById(R.id.txt_user_name);
+        this.txt_direction = findViewById(R.id.txt_direction);
+        this.btn_call_user = findViewById(R.id.btn_call_user);
+        this.btn_arrived = findViewById(R.id.btn_arrived);
+        this.btn_unloading_done = findViewById(R.id.btn_unloading_done);
+        this.btn_reached = findViewById(R.id.btn_reached);
+        this.btn_loading_done = findViewById(R.id.btn_loading_done);
+        this.btn_start = findViewById(R.id.btn_start);
+        this.btn_stop = findViewById(R.id.btn_stop);
+        this.btn_submit = findViewById(R.id.btn_submit);
+        this.rating_bar = findViewById(R.id.rating_bar);
+        this.ll_feedback = findViewById(R.id.ll_feedback);
         setTouchNClick(R.id.btn_arrived);
         setTouchNClick(R.id.btn_unloading_done);
         setTouchNClick(R.id.btn_reached);
@@ -735,9 +735,20 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             sendArrivalNotificationToUser();
             MyApp.setSharedPrefLong(AppConstants.TRIP_LOAD_START + this.currentTrip.getTrip_id(), System.currentTimeMillis());
             MyApp.setSharedPrefString("button", "btn_arrived");
+
         } else if (v.getId() == R.id.btn_start) {
             changeTripStatus(TripStatus.OnGoing.name());
             MyApp.setSharedPrefString("button", "btn_start");
+
+            RequestParams p = new RequestParams();
+            p.put("trip_id", MyApp.getSharedPrefString(AppConstants.CURRENT_TRIP_ID));
+            p.put("driver_id", MyApp.getApplication().readDriver().getDriver_id());
+            if (currentLocation != null) {
+                p.put("scheduled_pick_lat", currentLocation.getLatitude() + "");
+                p.put("scheduled_pick_lng", currentLocation.getLongitude() + "");
+                postCall(getContext(), AppConstants.BASE_URL_TRIP + "updatetrip", p, "", 25);
+            }
+
         } else if (v.getId() == R.id.btn_stop) {
             RequestParams p = new RequestParams();
             p.put("trip_id", this.currentTrip.getTrip_id());
@@ -1039,7 +1050,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            locationHandler.postDelayed(locationCallback, 5000);
+            locationHandler.postDelayed(locationCallback, 30000);
         }
     }
 
@@ -1230,6 +1241,13 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
             startActivity(new Intent(getContext(), MainActivity.class));
             MyApp.setSharedPrefString("button", "");
             finishAffinity();
+        } else if(callNumber == 25){
+            double sourceLat = Double.parseDouble(this.currentTrip.getTrip_scheduled_pick_lat());
+            double sourceLng = Double.parseDouble(this.currentTrip.getTrip_scheduled_pick_lng());
+            if (this.sourceMarker != null) {
+                this.sourceMarker.remove();
+            }
+            this.sourceMarker = this.mMap.addMarker(new MarkerOptions().position(new LatLng(sourceLat, sourceLng)).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue)));
         }
     }
 
@@ -1405,7 +1423,7 @@ public class OnTripActivity extends CustomActivity implements CustomActivity.Res
                 e.printStackTrace();
             }
 
-            locationHandler.postDelayed(locationCallback, 5000);
+            locationHandler.postDelayed(locationCallback, 60000);
 
         }
     };

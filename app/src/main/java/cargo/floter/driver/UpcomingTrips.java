@@ -123,7 +123,8 @@ public class UpcomingTrips extends CustomActivity implements ResponseCallback {
                 pp.put("android", t.getUser().getU_device_token());
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setTimeout(30000);
-                client.post("http://floter.in/floterapi/push/RiderPushNotification.php?", pp, new C07542());
+                client.post("" +
+                        "/RiderPushNotification.php?", pp, new C07542());
             }
         }
     }

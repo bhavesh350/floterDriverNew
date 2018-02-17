@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -30,7 +31,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class LocationService extends Service {
     public static final String BROADCAST_ACTION = "Hello World";
-    private static final int TWO_MINUTES = 1000 * 60 * 1;
+    private static final int TWO_MINUTES = 1000 * 60 * 2;
     public LocationManager locationManager;
     public MyLocationListener listener;
     public Location previousBestLocation = null;
@@ -49,13 +50,12 @@ public class LocationService extends Service {
         listener = new MyLocationListener();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
                 return START_STICKY;
             }
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 0, listener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 1, listener);
         try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0, listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 1, listener);
         } catch (Exception e) {
         }
 
@@ -92,7 +92,7 @@ public class LocationService extends Service {
         int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
         boolean isLessAccurate = accuracyDelta > 0;
         boolean isMoreAccurate = accuracyDelta < 0;
-        boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+        boolean isSignificantlyLessAccurate = accuracyDelta > 500;
 
         // Check if the old and new location are from the same provider
         boolean isFromSameProvider = isSameProvider(location.getProvider(),
@@ -144,12 +144,32 @@ public class LocationService extends Service {
         return t;
     }
 
+    private Handler updateHandler = new Handler();
+    private boolean isCallable = false;
+
+    private Runnable updateTimerCallback = new Runnable() {
+        @Override
+        public void run() {
+            isCallable = true;
+            updateHandler.postDelayed(updateTimerCallback, 60000);
+        }
+    };
+
+    private boolean isOnceInvoked = false;
 
     public class MyLocationListener implements LocationListener {
 
         public void onLocationChanged(final Location loc) {
+
+            if (!isOnceInvoked) {
+                isOnceInvoked = true;
+                updateHandler.postDelayed(updateTimerCallback, 60000);
+            }
+
+
             Log.i("------>>>>", "Location changed");
-            if (isBetterLocation(loc, previousBestLocation)) {
+            if (isBetterLocation(loc, previousBestLocation) && isCallable) {
+                isCallable = false;
                 loc.getLatitude();
                 loc.getLongitude();
                 intent.putExtra("Latitude", loc.getLatitude());
@@ -163,19 +183,9 @@ public class LocationService extends Service {
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setTimeout(10000);
                 client.post(AppConstants.BASE_URL + "updatedriverprofile?", pp, new JsonHttpResponseHandler() {
-
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
                         Log.d("Response:", response.toString());
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     }
                 });
             }

@@ -312,7 +312,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
     private void saveRateCard() {
         AsyncHttpClient client = new AsyncHttpClient();
         client.setTimeout(30000);
-        client.post("http://floter.in/floterapi/index.php/carapi/getratecard", new RateCardResponseCallback());
+        client.post("http://floter.in/floterapi/carapi/getratecard", new RateCardResponseCallback());
     }
 
     class RateCardResponseCallback extends JsonHttpResponseHandler {
@@ -986,7 +986,7 @@ public class MainActivity extends CustomActivity implements CustomActivity.Respo
                     + ".\nThank you.");
 
             ac.post("https://2factor.in/API/R1/?", rp, new JsonHttpResponseHandler());
-
+//            http://floter.in/floterapi/index.php
 //             http://floter.in/floterapi/push/RiderPushNotification?message={"json":"json"}&android=1hTgw2d_BrDwhYH_lN&trip_id=10&trip_status=accept&object={"json":"json"}
             client.post("http://floter.in/floterapi/push/RiderPushNotification.php?",
                     pp, new JsonHttpResponseHandler() {
